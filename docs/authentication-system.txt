@@ -1,0 +1,146 @@
+================================================================================
+                        TECNHLOAN AUTHENTICATION SYSTEM
+                              Technical Documentation
+================================================================================
+
+--------------------------------------------------------------------------------
+                              USER REGISTRATION
+--------------------------------------------------------------------------------
+
+REGISTRATION FIELDS USED:
+- Full Name        : User's complete name (required, min 2 characters)
+- Email            : CIT-U institutional email (required, must end with @cit.edu)
+- Student/Faculty ID : Unique identifier from the institution (required)
+- Role             : User role - STUDENT, FACULTY, or CUSTODIAN (required)
+- Password         : Account password (required, min 8 characters)
+- Confirm Password : Password confirmation (required, must match password)
+
+
+VALIDATION PROCESS:
+Frontend Validation (Client-side):
+1. Full Name: Required, must be at least 2 characters
+2. Email: Required, must be valid email format, must end with @cit.edu
+3. Student/Faculty ID: Required
+4. Password: Required, must be at least 8 characters
+5. Confirm Password: Required, must match the password field
+6. Role: Required, must be one of STUDENT, FACULTY, CUSTODIAN
+
+Backend Validation (Server-side):
+1. Password Match: Verifies password and confirm password match
+2. Email Domain: Verifies email ends with @cit.edu (institutional domain)
+3. Duplicate Check: Checks database for existing email and student ID
+
+
+HOW DUPLICATE ACCOUNTS ARE PREVENTED:
+The system prevents duplicate accounts through database-level unique constraints:
+
+1. Email Uniqueness:
+   - Before creating a new user, the system queries the database to check if
+     an account with the same email already exists
+   - If found, returns error: "DB-002:An account with this email already exists"
+
+2. Student/Faculty ID Uniqueness:
+   - Before creating a new user, the system queries the database to check if
+     an account with the same student/faculty ID already exists
+   - If found, returns error: "DB-002:An account with this Student/Faculty ID 
+     already exists"
+
+3. Database Constraints:
+   - The 'email' column has a UNIQUE constraint in the database
+   - The 'student_id' column has a UNIQUE constraint in the database
+
+
+HOW PASSWORDS ARE STORED SECURELY:
+Passwords are never stored in plain text. The system uses industry-standard
+bcrypt hashing:
+
+1. Algorithm: BCrypt (adaptive password hashing)
+   - Uses the BCrypt algorithm via Spring Security's PasswordEncoder
+   - Work factor: 12 (2^12 = 4096 iterations)
+   
+2. Hashing Process:
+   - When a user registers, their plain text password is passed to 
+     passwordEncoder.encode(password)
+   - BCrypt generates a salted hash of the password
+   - The result looks like: $2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.Q
+
+3. Storage:
+   - The hashed password is stored in the 'password_hash' column
+   - Original password is never stored or transmitted
+
+4. Verification:
+   - During login, the entered password is compared using:
+     passwordEncoder.matches(enteredPassword, storedHash)
+   - BCrypt handles the salt internally and performs secure comparison
+
+--------------------------------------------------------------------------------
+                                USER LOGIN
+--------------------------------------------------------------------------------
+
+LOGIN CREDENTIALS USED:
+- Email    : User's registered email address
+- Password : User's account password
+
+
+HOW THE SYSTEM VERIFIES USERS:
+The login verification process:
+
+1. Email Lookup:
+   - System searches the database for a user with the provided email
+   - Email is converted to lowercase for case-insensitive matching
+   - If no user found, returns: "AUTH-001:Invalid email or password"
+
+2. Password Verification:
+   - System retrieves the stored bcrypt hash from the database
+   - Uses passwordEncoder.matches() to compare:
+     * The entered password (plain text)
+     * The stored hash from the database
+   - If password doesn't match, returns: "AUTH-001:Invalid email or password"
+
+3. Token Generation (on successful verification):
+   - If both email and password are verified, the system generates:
+     * Access Token (JWT): Short-lived token for API authentication
+     * Refresh Token: Longer-lived token for obtaining new access tokens
+   - Tokens are signed with a secret key and include user info
+
+
+WHAT HAPPENS AFTER SUCCESSFUL LOGIN:
+1. Token Generation:
+   - System generates a JWT (JSON Web Token) containing:
+     * User's email
+     * User's role (STUDENT, FACULTY, or CUSTODIAN)
+     * Expiration time
+   - System also generates a refresh token for session renewal
+
+2. Response to Client:
+   - Returns AuthResponse with:
+     * success: true
+     * token: JWT access token
+     * refreshToken: Refresh token
+     * user: User object (id, email, fullName, role, etc.)
+     * message: "Login successful"
+
+3. Frontend Actions:
+   - Stores token in localStorage
+   - Stores refresh token in localStorage  
+   - Stores user info in localStorage
+   - Displays success message: "Welcome back, [User's Name]!"
+   - Redirects to dashboard after 1.5 seconds
+
+4. Subsequent Requests:
+   - Frontend includes the JWT token in Authorization header:
+     Authorization: Bearer <token>
+   - Backend validates token for protected endpoints
+   - Token expires after 24 hours (configurable)
+
+================================================================================
+                             SECURITY SUMMARY
+================================================================================
+
+✓ Duplicate Prevention:  Database unique constraints + application checks
+✓ Password Security:     BCrypt hashing with salt (work factor 12)
+✓ Authentication:       JWT tokens with role-based access
+✓ Email Validation:     Institutional domain restriction (@cit.edu)
+✓ Input Validation:    Client-side + server-side validation
+
+================================================================================
