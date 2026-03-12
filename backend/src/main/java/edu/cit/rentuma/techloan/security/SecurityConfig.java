@@ -1,6 +1,5 @@
 package edu.cit.rentuma.techloan.security;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.*;
@@ -22,11 +21,15 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtAuthFilter jwtAuthFilter) {
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,8 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/register",
                     "/api/auth/login",
-                    "/api/auth/google",
-                    "/api/auth/google/callback"
+                    "/api/auth/google"
                 ).permitAll()
                 // Everything else requires authentication
                 .anyRequest().authenticated()

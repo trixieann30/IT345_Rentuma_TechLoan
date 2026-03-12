@@ -4,7 +4,6 @@ import edu.cit.rentuma.techloan.dto.*;
 import edu.cit.rentuma.techloan.model.User;
 import edu.cit.rentuma.techloan.repository.UserRepository;
 import edu.cit.rentuma.techloan.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -22,6 +20,12 @@ public class AuthService {
 
     @Value("${app.institutional.domain}")
     private String institutionalDomain;
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     // ── REGISTER ─────────────────────────────────────────
     public AuthResponse register(RegisterRequest request) {
