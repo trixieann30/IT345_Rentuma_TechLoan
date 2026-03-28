@@ -26,8 +26,8 @@ class LoginActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.btnLogin.setOnClickListener {
             if (validateInputs()) {
-                val email = binding.etEmail.text.toString().trim()
-                val password = binding.etPassword.text.toString()
+                val email = binding.etEmail.text.toString().trim().lowercase()
+                val password = binding.etPassword.text.toString().trim()
                 viewModel.login(email, password)
             }
         }
@@ -40,8 +40,8 @@ class LoginActivity : AppCompatActivity() {
     private fun validateInputs(): Boolean {
         var isValid = true
 
-        val email = binding.etEmail.text.toString().trim()
-        val password = binding.etPassword.text.toString()
+        val email = binding.etEmail.text.toString().trim().lowercase()
+        val password = binding.etPassword.text.toString().trim()
 
         // Clear previous errors
         binding.tilEmail.error = null
@@ -76,15 +76,22 @@ class LoginActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.GONE
                     binding.btnLogin.isEnabled = true
 
+                    // Show success message from server
+                    binding.tvSuccess.visibility = View.VISIBLE
+                    binding.tvSuccess.text = state.message ?: "Login successful!"
+                    binding.tvError.visibility = View.GONE
+
                     // Save token to SharedPreferences
                     val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
                     prefs.edit().putString("jwt_token", state.token).apply()
 
-                    // Navigate to Dashboard
-                    val intent = Intent(this, DashboardActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
+                    // Delay navigation to show success message
+                    binding.root.postDelayed({
+                        val intent = Intent(this, DashboardActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish()
+                    }, 1500)
                 }
                 is AuthState.Error -> {
                     binding.progressBar.visibility = View.GONE

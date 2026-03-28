@@ -15,4 +15,11 @@
     <string name="dashboard_title">Dashboard</string>
     <string name="welcome_message">Welcome to TechLoan!</string>
     <string name="logout">Logout</string>
+
+    <!-- Role Options for Spinner -->
+    <string-array name="role_options">
+        <item>Select Account Type</item>
+        <item>STUDENT</item>
+        <item>FACULTY</item>
+    </string-array>
 </resources>

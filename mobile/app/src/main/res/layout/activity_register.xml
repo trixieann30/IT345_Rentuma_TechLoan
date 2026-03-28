@@ -148,9 +148,84 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:imeOptions="actionDone"
-                        android:hint="Min. 6 characters"/>
+                        android:imeOptions="actionNext"
+                        android:hint="Min. 8 characters"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Confirm Password Label -->
+                <TextView
+                    android:id="@+id/labelConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Confirm Password"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_900"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Confirm Password Field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilConfirmPassword"
+                    style="@style/Widget.TechLoan.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:passwordToggleEnabled="true"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etConfirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:imeOptions="actionNext"
+                        android:hint="Re-enter password"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Student ID Label -->
+                <TextView
+                    android:id="@+id/labelStudentId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Student/Faculty ID"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_900"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Student ID Field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilStudentId"
+                    style="@style/Widget.TechLoan.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etStudentId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        android:hint="e.g., 2024-12345"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Role Label -->
+                <TextView
+                    android:id="@+id/labelRole"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Account Type"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_900"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Role Spinner -->
+                <Spinner
+                    android:id="@+id/spinnerRole"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"
+                    android:entries="@array/role_options"
+                    android:padding="12dp"/>
 
                 <!-- Error -->
                 <TextView

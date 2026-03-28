@@ -28,10 +28,13 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.btnRegister.setOnClickListener {
             if (validateInputs()) {
-                val name = binding.etName.text.toString().trim()
-                val email = binding.etEmail.text.toString().trim()
-                val password = binding.etPassword.text.toString()
-                viewModel.register(name, email, password)
+                val fullName = binding.etName.text.toString().trim()
+                val email = binding.etEmail.text.toString().trim().lowercase()
+                val studentId = binding.etStudentId.text.toString().trim()
+                val password = binding.etPassword.text.toString().trim()
+                val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+                val role = binding.spinnerRole.selectedItem.toString()
+                viewModel.register(fullName, email, studentId, password, confirmPassword, role)
             }
         }
 
@@ -43,22 +46,29 @@ class RegisterActivity : AppCompatActivity() {
     private fun validateInputs(): Boolean {
         var isValid = true
 
-        val name = binding.etName.text.toString().trim()
+        val fullName = binding.etName.text.toString().trim()
         val email = binding.etEmail.text.toString().trim()
-        val password = binding.etPassword.text.toString()
+        val studentId = binding.etStudentId.text.toString().trim()
+        val password = binding.etPassword.text.toString().trim()
+        val confirmPassword = binding.etConfirmPassword.text.toString().trim()
 
         // Clear previous errors
         binding.tilName.error = null
         binding.tilEmail.error = null
+        binding.tilStudentId.error = null
         binding.tilPassword.error = null
+        binding.tilConfirmPassword.error = null
         binding.tvError.visibility = View.GONE
         binding.tvSuccess.visibility = View.GONE
 
-        if (name.isEmpty()) {
+        if (fullName.isEmpty()) {
             binding.tilName.error = "Full name is required"
             isValid = false
-        } else if (name.length < 2) {
+        } else if (fullName.length < 2) {
             binding.tilName.error = "Name must be at least 2 characters"
+            isValid = false
+        } else if (fullName.length > 100) {
+            binding.tilName.error = "Name must not exceed 100 characters"
             isValid = false
         }
 
@@ -68,14 +78,44 @@ class RegisterActivity : AppCompatActivity() {
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.tilEmail.error = "Enter a valid email address"
             isValid = false
+        } else if (!email.toLowerCase().endsWith("@cit.edu")) {
+            binding.tilEmail.error = "Email must be a CIT-U institutional email (@cit.edu)"
+            isValid = false
+        }
+
+        if (studentId.isEmpty()) {
+            binding.tilStudentId.error = "Student/Faculty ID is required"
+            isValid = false
+        } else if (studentId.length > 20) {
+            binding.tilStudentId.error = "ID must not exceed 20 characters"
+            isValid = false
         }
 
         if (password.isEmpty()) {
             binding.tilPassword.error = "Password is required"
             isValid = false
-        } else if (password.length < 6) {
-            binding.tilPassword.error = "Password must be at least 6 characters"
+        } else if (password.length < 8) {
+            binding.tilPassword.error = "Password must be at least 8 characters"
             isValid = false
+        } else if (!password.matches(Regex("^[A-Za-z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]*$"))) {
+            binding.tilPassword.error = "Password contains invalid characters"
+            isValid = false
+        }
+
+        if (confirmPassword.isEmpty()) {
+            binding.tilConfirmPassword.error = "Confirm password is required"
+            isValid = false
+        } else if (password != confirmPassword) {
+            binding.tilConfirmPassword.error = "Passwords do not match"
+            isValid = false
+        }
+
+        val selectedRole = binding.spinnerRole.selectedItem.toString()
+        if (selectedRole == "Select Account Type") {
+            // Show error - role not selected
+            isValid = false
+            // Find the spinner and show a toast or message
+            android.widget.Toast.makeText(this, "Please select an account type (Student or Faculty)", android.widget.Toast.LENGTH_SHORT).show()
         }
 
         return isValid

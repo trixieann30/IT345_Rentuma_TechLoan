@@ -17,6 +17,19 @@ object RetrofitClient {
     }
 
     private val httpClient = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val request = chain.request()
+            val startTime = System.currentTimeMillis()
+            val response = chain.proceed(request)
+            val duration = System.currentTimeMillis() - startTime
+            
+            android.util.Log.d("API_REQUEST", "URL: ${request.url}")
+            android.util.Log.d("API_REQUEST", "Method: ${request.method}")
+            android.util.Log.d("API_RESPONSE", "Status: ${response.code}")
+            android.util.Log.d("API_RESPONSE", "Duration: ${duration}ms")
+            
+            response
+        }
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)

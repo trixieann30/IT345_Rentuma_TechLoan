@@ -10,6 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -54,5 +56,14 @@ public class AuthController {
             @AuthenticationPrincipal UserDetails userDetails) {
         UserResponse user = authService.getCurrentUser(userDetails.getUsername());
         return ResponseEntity.ok(user);
+    }
+
+    // ── DEBUG: Test password verification ─────────────────
+    // This endpoint is for debugging only - remove in production
+    @PostMapping("/debug/verify-password")
+    public ResponseEntity<Map<String, Object>> debugVerifyPassword(
+            @RequestBody LoginRequest request) {
+        Map<String, Object> result = authService.debugVerifyPassword(request);
+        return ResponseEntity.ok(result);
     }
 }

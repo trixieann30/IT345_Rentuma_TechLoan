@@ -30,6 +30,14 @@ public class AuthService {
     // ── REGISTER ─────────────────────────────────────────
     public AuthResponse register(RegisterRequest request) {
 
+        System.err.println("[AUTH_REGISTER_DEBUG] Registration attempt");
+        System.err.println("[AUTH_REGISTER_DEBUG] Email: " + request.getEmail());
+        System.err.println("[AUTH_REGISTER_DEBUG] Full Name: " + request.getFullName());
+        System.err.println("[AUTH_REGISTER_DEBUG] Student ID: " + request.getStudentId());
+        System.err.println("[AUTH_REGISTER_DEBUG] Role: " + request.getRole());
+        System.err.println("[AUTH_REGISTER_DEBUG] Password length: " + (request.getPassword() != null ? request.getPassword().length() : "null"));
+        System.err.println("[AUTH_REGISTER_DEBUG] Confirm Password length: " + (request.getConfirmPassword() != null ? request.getConfirmPassword().length() : "null"));
+
         // 1. Validate passwords match
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("VALID-002:Passwords do not match");
@@ -54,6 +62,7 @@ public class AuthService {
 
         // 5. Hash password (bcrypt, strength 12)
         String hashedPassword = passwordEncoder.encode(request.getPassword());
+        System.err.println("[AUTH_REGISTER_DEBUG] Hashed password length: " + (hashedPassword != null ? hashedPassword.length() : "null"));
 
         // 6. Build and save user
         User user = User.builder()
@@ -65,7 +74,11 @@ public class AuthService {
                 .penaltyPoints(0)
                 .build();
 
+        System.err.println("[AUTH_REGISTER_DEBUG] User built, password hash in user: " + (user.getPasswordHash() != null ? user.getPasswordHash().length() : "null"));
+
         User savedUser = userRepository.save(user);
+        
+        System.err.println("[AUTH_REGISTER_DEBUG] User saved, password hash in saved user: " + (savedUser.getPasswordHash() != null ? savedUser.getPasswordHash().length() : "null"));
 
         // 7. Generate tokens
         String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().name());
@@ -90,11 +103,18 @@ public class AuthService {
                     new BadCredentialsException("AUTH-001:Invalid email or password"));
 
         // 2. Verify password against bcrypt hash
+        System.err.println("[AUTH_DEBUG] Login attempt for: " + request.getEmail());
+        System.err.println("[AUTH_DEBUG] Password from request length: " + (request.getPassword() != null ? request.getPassword().length() : "null"));
+        System.err.println("[AUTH_DEBUG] Password hash exists: " + (user.getPasswordHash() != null));
+        
         if (user.getPasswordHash() == null ||
             !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            System.err.println("[AUTH_DEBUG] Password mismatch!");
             throw new BadCredentialsException("AUTH-001:Invalid email or password");
         }
 
+        System.err.println("[AUTH_DEBUG] Password verified!");
+        
         // 3. Generate tokens
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
@@ -104,7 +124,7 @@ public class AuthService {
                 .user(UserResponse.from(user))
                 .token(token)
                 .refreshToken(refreshToken)
-                .message("Login successful")
+                .message("Welcome back, " + user.getFullName() + "!")
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
@@ -115,5 +135,38 @@ public class AuthService {
                 .orElseThrow(() ->
                     new RuntimeException("DB-001:User not found"));
         return UserResponse.from(user);
+    }
+
+    // ── DEBUG METHOD - Remove in production ───────────────
+    public java.util.Map<String, Object> debugVerifyPassword(LoginRequest request) {
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        
+        var userOpt = userRepository.findByEmail(request.getEmail().toLowerCase());
+        
+        if (userOpt.isEmpty()) {
+            result.put("success", false);
+            result.put("message", "User not found");
+            return result;
+        }
+        
+        User user = userOpt.get();
+        result.put("user_found", true);
+        result.put("email", user.getEmail());
+        result.put("password_hash_exists", user.getPasswordHash() != null);
+        result.put("password_input_length", request.getPassword().length());
+        
+        boolean matches = user.getPasswordHash() != null && 
+                         passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
+        result.put("password_matches", matches);
+        
+        if (matches) {
+            result.put("success", true);
+            result.put("message", "Password verified successfully");
+        } else {
+            result.put("success", false);
+            result.put("message", "Password verification failed");
+        }
+        
+        return result;
     }
 }

@@ -135,6 +135,18 @@
                     android:layout_marginBottom="8dp"
                     android:fontFamily="sans-serif"/>
 
+                <!-- Success -->
+                <TextView
+                    android:id="@+id/tvSuccess"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/green_600"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Login successful! Redirecting..."/>
+
                 <!-- Log In Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogin"

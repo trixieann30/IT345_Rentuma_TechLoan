@@ -49,6 +49,7 @@ public class User {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
+        this.passwordHash = passwordHash;
         this.personalEmail = personalEmail;
         this.studentId = studentId;
         this.googleId = googleId;
