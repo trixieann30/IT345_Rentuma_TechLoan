@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TechLoan</string>
+    <string name="login_title">Welcome Back</string>
+    <string name="login_subtitle">Sign in to your CIT-U TechLoan account</string>
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Join TechLoan to borrow lab equipment</string>
+    <string name="hint_name">Full Name</string>
+    <string name="hint_email">Email Address</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Sign In</string>
+    <string name="btn_register">Create Account</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+    <string name="no_account">Don\'t have an account? Sign Up</string>
+    <string name="dashboard_title">Dashboard</string>
+    <string name="welcome_message">Welcome to TechLoan!</string>
+    <string name="logout">Logout</string>
+</resources>
