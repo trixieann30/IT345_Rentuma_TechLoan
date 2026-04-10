@@ -29,4 +29,14 @@ export const authService = {
   me:       ()     => api.get('/auth/me'),
 }
 
+// Borrow request endpoints
+export const borrowService = {
+  createRequest: (data) => api.post('/borrow/create', data),
+  getMyRequests: () => api.get('/borrow/my-requests'),
+  getRequest: (id) => api.get(`/borrow/${id}`),
+  approveRequest: (id) => api.put(`/borrow/${id}/approve`),
+  returnRequest: (id) => api.put(`/borrow/${id}/return`),
+  markOverdue: (id) => api.put(`/borrow/${id}/overdue`),
+}
+
 export default api

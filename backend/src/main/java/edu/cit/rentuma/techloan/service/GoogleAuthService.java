@@ -7,6 +7,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import edu.cit.rentuma.techloan.dto.*;
 import edu.cit.rentuma.techloan.model.User;
+import edu.cit.rentuma.techloan.observer.AuthEventPublisher;
 import edu.cit.rentuma.techloan.repository.UserRepository;
 import edu.cit.rentuma.techloan.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,21 +18,38 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
+/**
+ * Google OAuth authentication service.
+ *
+ * Refactoring 1 – Builder Pattern (Creational):
+ *   personalEmail is now set via User.builder().personalEmail(…) instead of
+ *   the fragile reflection workaround that existed before.
+ *
+ * Refactoring 4 – Observer Pattern (Behavioral):
+ *   After a successful Google auth, an event is published via
+ *   AuthEventPublisher so interested observers (e.g., audit log, email
+ *   service) can react without coupling this service to them.
+ */
 @Service
 public class GoogleAuthService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final AuthEventPublisher eventPublisher;   // <-- Observer
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
-    public GoogleAuthService(UserRepository userRepository, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
+    public GoogleAuthService(UserRepository userRepository,
+                             JwtUtil jwtUtil,
+                             AuthEventPublisher eventPublisher) {
+        this.userRepository  = userRepository;
+        this.jwtUtil         = jwtUtil;
+        this.eventPublisher  = eventPublisher;
     }
 
-    // ── Verify Google ID Token ──────────────────────────
+    // ── Verify Google ID Token ──────────────────────────────────────
+
     public GoogleIdToken.Payload verifyIdToken(String idTokenString)
             throws GeneralSecurityException, IOException {
 
@@ -45,19 +63,19 @@ public class GoogleAuthService {
         if (idToken == null) {
             throw new IllegalArgumentException("AUTH-004:Invalid Google ID token");
         }
-
         return idToken.getPayload();
     }
 
-    // ── Google Register / Login ─────────────────────────
+    // ── Google Register / Login ──────────────────────────────────────
+
     public AuthResponse googleAuth(GoogleAuthRequest request) {
         try {
             GoogleIdToken.Payload payload = verifyIdToken(request.getIdToken());
 
-            String googleId = payload.getSubject();
-            String email = payload.getEmail();
-            String fullName = (String) payload.get("name");
-            String role = request.getRole();
+            String googleId     = payload.getSubject();
+            String email        = payload.getEmail();
+            String fullName     = (String) payload.get("name");
+            String role         = request.getRole();
             String personalEmail = request.getPersonalEmail();
 
             // Validate role
@@ -68,34 +86,31 @@ public class GoogleAuthService {
             }
 
             // Find or create user
-                User user = userRepository.findByGoogleId(googleId)
-                    .orElseGet(() -> {
-                    // Create new user if doesn't exist
-                    User u = User.builder()
-                        .fullName(fullName)
-                        .email(email.toLowerCase())
-                        .googleId(googleId)
-                        .role(User.Role.valueOf(role))
-                        .penaltyPoints(0)
-                        .build();
-                    // Store personal email if provided
-                    // (Assumes User entity has a personalEmail field, otherwise add it)
-                    try { u.getClass().getMethod("setPersonalEmail", String.class).invoke(u, personalEmail); } catch (Exception ignored) {}
-                    return u;
-                    });
+            // Builder fix: personalEmail now set via builder (no reflection)
+            User user = userRepository.findByGoogleId(googleId)
+                    .orElseGet(() -> User.builder()
+                            .fullName(fullName)
+                            .email(email.toLowerCase())
+                            .googleId(googleId)
+                            .role(User.Role.valueOf(role))
+                            .personalEmail(personalEmail)   // <-- no reflection!
+                            .penaltyPoints(0)
+                            .build());
 
-            // Update user if already exists
+            // Update existing user fields
             if (user.getId() != null) {
                 user.setFullName(fullName);
                 user.setEmail(email.toLowerCase());
-                try { user.getClass().getMethod("setPersonalEmail", String.class).invoke(user, personalEmail); } catch (Exception ignored) {}
+                user.setPersonalEmail(personalEmail);
             }
 
             User savedUser = userRepository.save(user);
 
-            // Generate tokens
-            String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().name());
+            String token        = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().name());
             String refreshToken = jwtUtil.generateRefreshToken(savedUser.getEmail());
+
+            // Observer: publish login event to any registered listeners
+            eventPublisher.publishGoogleAuthSuccess(savedUser);
 
             return AuthResponse.builder()
                     .success(true)
@@ -107,7 +122,8 @@ public class GoogleAuthService {
                     .build();
 
         } catch (GeneralSecurityException | IOException e) {
-            throw new IllegalArgumentException("AUTH-004:Failed to verify Google token: " + e.getMessage());
+            throw new IllegalArgumentException(
+                    "AUTH-004:Failed to verify Google token: " + e.getMessage());
         }
     }
 }

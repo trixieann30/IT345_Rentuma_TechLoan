@@ -5,6 +5,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * User entity.
+ * Refactoring 1 – Builder Pattern (Creational):
+ *   personalEmail is now a first-class field in UserBuilder,
+ *   eliminating the reflection workaround in GoogleAuthService.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -28,6 +34,7 @@ public class User {
     @Column(name = "google_id", unique = true, length = 255)
     private String googleId;
 
+    // --- Builder fix: now a first-class field (no reflection needed) ---
     @Column(name = "personal_email", length = 150)
     private String personalEmail;
 
@@ -42,97 +49,63 @@ public class User {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public User() {
-    }
+    public User() {}
 
-    public User(Long id, String fullName, String email, String passwordHash, String studentId, String googleId, String personalEmail, Role role, Integer penaltyPoints, LocalDateTime createdAt) {
-        this.id = id;
-        this.fullName = fullName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.personalEmail = personalEmail;
-        this.studentId = studentId;
-        this.googleId = googleId;
-        this.role = role;
-        this.penaltyPoints = penaltyPoints;
-        this.createdAt = createdAt;
+    // Full-args constructor used by the Builder
+    private User(UserBuilder b) {
+        this.id           = b.id;
+        this.fullName     = b.fullName;
+        this.email        = b.email;
+        this.passwordHash = b.passwordHash;
+        this.studentId    = b.studentId;
+        this.googleId     = b.googleId;
+        this.personalEmail = b.personalEmail;
+        this.role          = b.role;
+        this.penaltyPoints = b.penaltyPoints != null ? b.penaltyPoints : 0;
+        this.createdAt     = b.createdAt;
     }
 
     public static UserBuilder builder() {
         return new UserBuilder();
     }
 
-    public Long getId() {
-        return id;
-    }
+    // ----------------------------------------------------------------
+    // Getters / Setters
+    // ----------------------------------------------------------------
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId()                          { return id; }
+    public void setId(Long id)                   { this.id = id; }
 
-    public String getFullName() {
-        return fullName;
-    }
+    public String getFullName()                  { return fullName; }
+    public void setFullName(String fullName)     { this.fullName = fullName; }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public String getEmail()                     { return email; }
+    public void setEmail(String email)           { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getPasswordHash()              { return passwordHash; }
+    public void setPasswordHash(String h)        { this.passwordHash = h; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getStudentId()                 { return studentId; }
+    public void setStudentId(String studentId)   { this.studentId = studentId; }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+    public String getGoogleId()                  { return googleId; }
+    public void setGoogleId(String googleId)     { this.googleId = googleId; }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+    public String getPersonalEmail()             { return personalEmail; }
+    public void setPersonalEmail(String email)   { this.personalEmail = email; }
 
-    public String getStudentId() {
-        return studentId;
-    }
+    public Role getRole()                        { return role; }
+    public void setRole(Role role)               { this.role = role; }
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
+    public Integer getPenaltyPoints()            { return penaltyPoints; }
+    public void setPenaltyPoints(Integer p)      { this.penaltyPoints = p; }
 
-    public String getGoogleId() {
-        return googleId;
-    }
+    public LocalDateTime getCreatedAt()          { return createdAt; }
+    public void setCreatedAt(LocalDateTime d)    { this.createdAt = d; }
 
-    public void setGoogleId(String googleId) {
-        this.googleId = googleId;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Integer getPenaltyPoints() {
-        return penaltyPoints;
-    }
-
-    public void setPenaltyPoints(Integer penaltyPoints) {
-        this.penaltyPoints = penaltyPoints;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    // ----------------------------------------------------------------
+    // Builder (Creational – Builder Pattern)
+    // ----------------------------------------------------------------
 
     public static class UserBuilder {
         private Long id;
@@ -141,60 +114,28 @@ public class User {
         private String passwordHash;
         private String studentId;
         private String googleId;
+        private String personalEmail;   // <-- added (was missing before)
         private Role role;
         private Integer penaltyPoints = 0;
         private LocalDateTime createdAt;
-        private String personalEmail;
 
-        public UserBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
+        public UserBuilder id(Long id)                         { this.id = id; return this; }
+        public UserBuilder fullName(String v)                  { this.fullName = v; return this; }
+        public UserBuilder email(String v)                     { this.email = v; return this; }
+        public UserBuilder passwordHash(String v)              { this.passwordHash = v; return this; }
+        public UserBuilder studentId(String v)                 { this.studentId = v; return this; }
+        public UserBuilder googleId(String v)                  { this.googleId = v; return this; }
+        public UserBuilder personalEmail(String v)             { this.personalEmail = v; return this; }
+        public UserBuilder role(Role v)                        { this.role = v; return this; }
+        public UserBuilder penaltyPoints(Integer v)            { this.penaltyPoints = v; return this; }
+        public UserBuilder createdAt(LocalDateTime v)          { this.createdAt = v; return this; }
 
-        public UserBuilder fullName(String fullName) {
-            this.fullName = fullName;
-            return this;
-        }
-
-        public UserBuilder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public UserBuilder passwordHash(String passwordHash) {
-            this.passwordHash = passwordHash;
-            return this;
-        }
-
-        public UserBuilder studentId(String studentId) {
-            this.studentId = studentId;
-            return this;
-        }
-
-        public UserBuilder googleId(String googleId) {
-            this.googleId = googleId;
-            return this;
-        }
-
-        public UserBuilder role(Role role) {
-            this.role = role;
-            return this;
-        }
-
-        public UserBuilder penaltyPoints(Integer penaltyPoints) {
-            this.penaltyPoints = penaltyPoints;
-            return this;
-        }
-
-        public UserBuilder createdAt(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
-            return this;
-        }
-
-        public User build() {
-            return new User(id, fullName, email, passwordHash, studentId, googleId, this.personalEmail, role, penaltyPoints, createdAt);
-        }
+        public User build() { return new User(this); }
     }
+
+    // ----------------------------------------------------------------
+    // Role enum
+    // ----------------------------------------------------------------
 
     public enum Role {
         STUDENT, FACULTY, CUSTODIAN
