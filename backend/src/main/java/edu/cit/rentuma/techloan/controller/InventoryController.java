@@ -84,14 +84,7 @@ public class InventoryController {
         return ResponseEntity.ok(categories);
     }
 
-/*************  ✨ Windsurf Command 🌟  *************/
-    // ─────────────────────────────────────────────────────────────────────────
-    // POST /api/inventory  –  Add new item (custodian only)
-    // Adds a new item to the inventory database.
-    // Only custodians can add new items.
-    // The request body should contain the item name, description, category, condition, and initial quantity.
-    // The response will contain the newly created item with an auto-generated item code.
-    // The item code can be updated via PUT if needed.
+
     // ─────────────────────────────────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<?> createItem(
@@ -120,7 +113,7 @@ public class InventoryController {
         InventoryItem saved = inventoryRepository.save(item);
         return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(saved));
     }
-/*******  fbbc96cc-5cb4-401d-9717-aaced6be48e9  *******/
+
 
     // ─────────────────────────────────────────────────────────────────────────
     // PUT /api/inventory/{id}  –  Update item (custodian only)

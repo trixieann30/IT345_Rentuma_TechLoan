@@ -17,58 +17,44 @@ api.interceptors.request.use((config) => {
 // Auth endpoints
 export const authService = {
   register: (data) => api.post('/auth/register', data),
-<<<<<<< Updated upstream
+
   login:    (data) => api.post('/auth/login', data),
   
   // Google OAuth endpoints
-  googleLogin: (idToken) => 
-    api.post('/auth/google', { idToken, role: 'STUDENT' }),
-  
-  googleRegister: (idToken, role, personalEmail) => 
-    api.post('/auth/google', { idToken, role, personalEmail }),
-  
-  me:       ()     => api.get('/auth/me'),
-}
+  googleLogin:    (idToken)                          => api.post('/auth/google', { idToken, role: 'STUDENT' }),
+  googleRegister: (idToken, role, personalEmail)     => api.post('/auth/google', { idToken, role, personalEmail }),
 
-// Borrow request endpoints
-export const borrowService = {
-  createRequest: (data) => api.post('/borrow/create', data),
-  getMyRequests: () => api.get('/borrow/my-requests'),
-  getRequest: (id) => api.get(`/borrow/${id}`),
-  approveRequest: (id) => api.put(`/borrow/${id}/approve`),
-  returnRequest: (id) => api.put(`/borrow/${id}/return`),
-  markOverdue: (id) => api.put(`/borrow/${id}/overdue`),
-}
-
-export default api
-=======
-  login: (data) => api.post('/auth/login', data),
-  googleLogin: (idToken) => api.post('/auth/google', { idToken, role: 'STUDENT' }),
-  googleRegister: (idToken, role, personalEmail) =>
-    api.post('/auth/google', { idToken, role, personalEmail }),
   me: () => api.get('/auth/me'),
+  
 }
 
-// Reservation endpoints
+
+
+// Reservation endpoints — path changed from /borrow to /reservations
+// Body shape changed to: { inventoryId, quantity, purpose, returnDate }
 export const reservationService = {
-  createReservation: (data) => api.post('/reservations', data),
-  getReservations: (status) =>
+  // Student: create a new reservation
+  // body: { inventoryId: Long, quantity: number, purpose: string, returnDate: 'YYYY-MM-DD' }
+  createReservation: (data)  => api.post('/reservations', data),
+
+  // Get reservations — custodian gets all, student gets own
+  getReservations:   (status) =>
     api.get('/reservations', { params: status ? { status } : {} }),
+
   getReservation: (id) => api.get(`/reservations/${id}`),
-  approveReservation: (id) => api.put(`/reservations/${id}/approve`),
-  rejectReservation: (id, reason) => api.put(`/reservations/${id}/reject`, { reason }),
-  returnReservation: (id) => api.put(`/reservations/${id}/return`),
-  markOverdue: (id) => api.put(`/reservations/${id}/overdue`),
-  getQR: (id) => api.get(`/reservations/${id}/qr`),
-  downloadSlip: (id) =>
-    api.get(`/reservations/${id}/slip`, { responseType: 'blob' }),
+
+  // Custodian actions
+  approveReservation: (id)           => api.put(`/reservations/${id}/approve`),
+  rejectReservation:  (id, reason)   => api.put(`/reservations/${id}/reject`, { reason }),
+  returnReservation:  (id)           => api.put(`/reservations/${id}/return`),
+  markOverdue:        (id)           => api.put(`/reservations/${id}/overdue`),
 }
 
 export const borrowService = reservationService
 
 // Inventory endpoints
 export const inventoryService = {
-  // Read (all roles)
+
   getAvailable: () => api.get('/inventory/available'),
   getAll: () => api.get('/inventory/all'),
   getById: (id) => api.get(`/inventory/${id}`),
@@ -103,4 +89,4 @@ export const paymentService = {
 }
 
 export default api
->>>>>>> Stashed changes
+
