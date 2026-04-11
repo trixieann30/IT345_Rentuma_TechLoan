@@ -1,37 +1,54 @@
 package edu.cit.rentuma.techloan.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 /**
- * DTO for creating a new borrow request.
- * Validates input from the client before passing to the service layer.
+ * DTO for creating a new reservation/borrow request.
+ *
+ * CHANGED: Now matches the SDD reservation request body:
+ *   { inventoryId, quantity, purpose, returnDate }
+ *
+ * Old fields (itemName, itemDescription, dueDate as LocalDateTime) are removed.
+ * The controller resolves itemName/description from the inventory record.
  */
 public class CreateBorrowRequestDTO {
 
-    @NotBlank(message = "Item name is required")
-    private String itemName;
+    @NotNull(message = "Inventory item ID is required")
+    private Long inventoryId;
 
-    private String itemDescription;
+    @NotNull(message = "Quantity is required")
+    @Min(value = 1, message = "Quantity must be at least 1")
+    private Integer quantity;
 
-    @NotNull(message = "Due date is required")
-    private LocalDateTime dueDate;
+    private String purpose;
+
+    @NotNull(message = "Return date is required")
+    @Future(message = "Return date must be a future date")
+    private LocalDate returnDate;
 
     public CreateBorrowRequestDTO() {}
 
-    public CreateBorrowRequestDTO(String itemName, String itemDescription, LocalDateTime dueDate) {
-        this.itemName = itemName;
-        this.itemDescription = itemDescription;
-        this.dueDate = dueDate;
+    public CreateBorrowRequestDTO(Long inventoryId, Integer quantity,
+                                   String purpose, LocalDate returnDate) {
+        this.inventoryId = inventoryId;
+        this.quantity    = quantity;
+        this.purpose     = purpose;
+        this.returnDate  = returnDate;
     }
 
-    public String getItemName() { return itemName; }
-    public void setItemName(String itemName) { this.itemName = itemName; }
+    public Long getInventoryId()                 { return inventoryId; }
+    public void setInventoryId(Long inventoryId) { this.inventoryId = inventoryId; }
 
-    public String getItemDescription() { return itemDescription; }
-    public void setItemDescription(String itemDescription) { this.itemDescription = itemDescription; }
+    public Integer getQuantity()                 { return quantity; }
+    public void setQuantity(Integer quantity)    { this.quantity = quantity; }
 
-    public LocalDateTime getDueDate() { return dueDate; }
-    public void setDueDate(LocalDateTime dueDate) { this.dueDate = dueDate; }
+    public String getPurpose()                   { return purpose; }
+    public void setPurpose(String purpose)       { this.purpose = purpose; }
+
+    public LocalDate getReturnDate()                   { return returnDate; }
+    public void setReturnDate(LocalDate returnDate)    { this.returnDate = returnDate; }
 }

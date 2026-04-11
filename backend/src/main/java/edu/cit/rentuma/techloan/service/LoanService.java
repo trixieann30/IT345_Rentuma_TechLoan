@@ -6,22 +6,21 @@ import edu.cit.rentuma.techloan.observer.BorrowStatus;
 import edu.cit.rentuma.techloan.repository.BorrowRequestRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Refactoring 4 – Observer Pattern (Behavioral):
+ * Manages the borrow-request lifecycle.
  *
- * Manages the borrow-request lifecycle. Status transitions are the only
- * responsibility of this service. Side effects — penalty calculation,
- * audit logging, and future notifications — are handled by independent
- * @EventListener beans that react to {@link
- * edu.cit.rentuma.techloan.observer.BorrowStatusChangedEvent}.
+ * CHANGED: createBorrowRequest now accepts inventoryId, quantity, purpose,
+ * and returnDate (LocalDate) to match the updated BorrowRequest model.
+ * The controller resolves itemName/description from InventoryItem and passes
+ * them here as denormalised cache values.
  *
- * LoanService knows nothing about PenaltyListener, AuditListener, or
- * any other downstream consumer. Adding a new reaction to a status
- * change requires only a new @EventListener class — this service never
- * needs to change.
+ * Status transitions are the only responsibility of this service.
+ * Side effects (penalty calculation, audit logging) are handled by
+ * independent @EventListener beans via BorrowEventPublisher.
  */
 @Service
 public class LoanService {
@@ -31,74 +30,71 @@ public class LoanService {
 
     public LoanService(BorrowRequestRepository repository,
                        BorrowEventPublisher eventPublisher) {
-        this.repository    = repository;
+        this.repository     = repository;
         this.eventPublisher = eventPublisher;
     }
 
     /**
      * Transitions a BorrowRequest to the given status and publishes a
-     * {@link edu.cit.rentuma.techloan.observer.BorrowStatusChangedEvent}
-     * so that all registered listeners can react independently.
-     *
-     * @param id        the ID of the BorrowRequest to update
-     * @param newStatus the target status
-     * @return the saved BorrowRequest
+     * BorrowStatusChangedEvent so all registered listeners can react independently.
      */
     public BorrowRequest updateStatus(Long id, BorrowStatus newStatus) {
         BorrowRequest request = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DB-002:BorrowRequest not found: " + id));
+                .orElseThrow(() -> new RuntimeException("DB-002: BorrowRequest not found: " + id));
 
         request.setStatus(newStatus);
         BorrowRequest saved = repository.save(request);
 
-        // Publish event — LoanService knows nothing about penalties or notifications
         eventPublisher.publishStatusChange(id, newStatus, saved.getUserEmail());
-
         return saved;
     }
 
     /**
-     * Creates a new borrow request for the given user.
+     * Creates a new reservation/borrow request in PENDING status.
      *
-     * @param userId         the user creating the request
-     * @param userEmail      the user's email
-     * @param itemName       name of the item to borrow
-     * @param itemDescription description of the item
-     * @param dueDate       when the item must be returned
+     * @param userId          the user creating the request
+     * @param userEmail       the user's email
+     * @param inventoryId     FK to the InventoryItem being reserved
+     * @param quantity        number of units requested
+     * @param purpose         borrower's stated purpose/remarks
+     * @param itemName        denormalised item name (from InventoryItem)
+     * @param itemDescription denormalised item description (from InventoryItem)
+     * @param returnDate      date the borrower promises to return the item
      * @return the created BorrowRequest in PENDING status
      */
-    public BorrowRequest createBorrowRequest(Long userId, String userEmail, String itemName,
-                                             String itemDescription, LocalDateTime dueDate) {
+    public BorrowRequest createBorrowRequest(Long userId, String userEmail,
+                                              Long inventoryId, Integer quantity,
+                                              String purpose,
+                                              String itemName, String itemDescription,
+                                              LocalDate returnDate) {
         BorrowRequest request = new BorrowRequest();
         request.setUserId(userId);
         request.setUserEmail(userEmail);
+        request.setInventoryId(inventoryId);
+        request.setQuantity(quantity);
+        request.setPurpose(purpose);
         request.setItemName(itemName);
         request.setItemDescription(itemDescription);
-        request.setDueDate(dueDate);
+        request.setReturnDate(returnDate);
         request.setStatus(BorrowStatus.PENDING);
         request.setBorrowDate(LocalDateTime.now());
 
         return repository.save(request);
     }
 
-    /**
-     * Get all borrow requests for a user.
-     *
-     * @param userId the user ID
-     * @return list of BorrowRequests belonging to the user
-     */
+    /** Get all borrow requests for a specific user. */
     public List<BorrowRequest> getUserBorrowRequests(Long userId) {
         return repository.findByUserId(userId);
     }
 
-    /**
-     * Get a specific borrow request by ID.
-     *
-     * @param id the request ID
-     * @return the BorrowRequest
-     */
+    /** Get all PENDING borrow requests (for custodian queue). */
+    public List<BorrowRequest> getPendingBorrowRequests() {
+        return repository.findByStatus(BorrowStatus.PENDING);
+    }
+
+    /** Get a specific borrow request by ID. */
     public BorrowRequest getBorrowRequest(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DB-002:BorrowRequest not found: " + id));
+                .orElseThrow(() -> new RuntimeException("DB-002: BorrowRequest not found: " + id));
     }
 }

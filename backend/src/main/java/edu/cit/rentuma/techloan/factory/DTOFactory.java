@@ -7,28 +7,19 @@ import edu.cit.rentuma.techloan.model.User;
 import org.springframework.stereotype.Component;
 
 /**
- * Refactoring 5 – Factory Pattern (Creational):
+ * Factory Pattern (Creational):
+ * Centralises all entity → DTO conversion so controllers
+ * never construct DTOs directly.
  *
- * Centralizes the creation of DTOs from domain entities. This abstracts
- * the conversion logic, making it easy to change DTO construction rules
- * without modifying multiple places in the codebase.
- *
- * Benefits:
- *   - Single responsibility: DTOFactory only creates DTOs
- *   - Easy to test: Mock DTOFactory in unit tests
- *   - Centralized logic: Change DTO format in one place
- *   - Maintainable: Add new DTO types by extending the factory
- *
- * Real-world use: Object builders, response mappers, serialization factories
+ * CHANGED: toBorrowRequestDTO now maps inventoryId, quantity, purpose,
+ * returnDate and actualReturnDate from the updated BorrowRequest model.
  */
 @Component
 public class DTOFactory {
 
     /**
-     * Convert a User entity to UserResponse DTO
-     *
-     * @param user the User entity
-     * @return UserResponse DTO with sanitized fields
+     * Convert a User entity to a UserResponse DTO.
+     * Password fields are never included.
      */
     public UserResponse toUserResponse(User user) {
         return new UserResponse(
@@ -43,7 +34,8 @@ public class DTOFactory {
     }
 
     /**
-     * Convert a BorrowRequest entity to BorrowRequestDTO
+     * Convert a BorrowRequest entity to a BorrowRequestDTO.
+     * Includes all SDD-required fields: inventoryId, quantity, purpose, returnDate.
      *
      * @param borrow the BorrowRequest entity
      * @return BorrowRequestDTO with all relevant fields
@@ -53,12 +45,16 @@ public class DTOFactory {
                 borrow.getId(),
                 borrow.getUserId(),
                 borrow.getUserEmail(),
+                borrow.getInventoryId(),
+                borrow.getQuantity(),
+                borrow.getPurpose(),
                 borrow.getItemName(),
                 borrow.getItemDescription(),
                 borrow.getStatus(),
                 borrow.getBorrowDate(),
                 borrow.getDueDate(),
                 borrow.getReturnDate(),
+                borrow.getActualReturnDate(),
                 borrow.getCreatedAt()
         );
     }
