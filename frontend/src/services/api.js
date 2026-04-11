@@ -16,15 +16,19 @@ api.interceptors.request.use((config) => {
 
 // Auth endpoints
 export const authService = {
-  register: (data)   => api.post('/auth/register', data),
-  login:    (data)   => api.post('/auth/login', data),
+  register: (data) => api.post('/auth/register', data),
 
+  login:    (data) => api.post('/auth/login', data),
+  
   // Google OAuth endpoints
   googleLogin:    (idToken)                          => api.post('/auth/google', { idToken, role: 'STUDENT' }),
   googleRegister: (idToken, role, personalEmail)     => api.post('/auth/google', { idToken, role, personalEmail }),
 
   me: () => api.get('/auth/me'),
+  
 }
+
+
 
 // Reservation endpoints — path changed from /borrow to /reservations
 // Body shape changed to: { inventoryId, quantity, purpose, returnDate }
@@ -46,26 +50,43 @@ export const reservationService = {
   markOverdue:        (id)           => api.put(`/reservations/${id}/overdue`),
 }
 
-// Keep old borrowService as an alias so any existing component code doesn't break immediately.
-// TODO: migrate all components from borrowService → reservationService and remove this.
 export const borrowService = reservationService
 
 // Inventory endpoints
 export const inventoryService = {
-  // Read (all roles)
-  getAvailable:   ()         => api.get('/inventory/available'),
-  getAll:         ()         => api.get('/inventory/all'),
-  getById:        (id)       => api.get(`/inventory/${id}`),
-  getByCategory:  (category) => api.get(`/inventory/category/${category}`),
-  search:         (query)    => api.get('/inventory/search', { params: { query } }),
-  getCategories:  ()         => api.get('/inventory/categories'),
 
-  // Custodian CRUD — NEW
-  // createItem body: { name, description, category, quantity, condition, specifications? }
-  createItem: (data)       => api.post('/inventory', data),
-  // updateItem body: any subset of { name, description, category, quantity, condition, available }
-  updateItem: (id, data)   => api.put(`/inventory/${id}`, data),
-  deleteItem: (id)         => api.delete(`/inventory/${id}`),
+  getAvailable: () => api.get('/inventory/available'),
+  getAll: () => api.get('/inventory/all'),
+  getById: (id) => api.get(`/inventory/${id}`),
+  getByCategory: (category) => api.get(`/inventory/category/${category}`),
+  search: (query) => api.get('/inventory/search', { params: { query } }),
+  getCategories: () => api.get('/inventory/categories'),
+
+  // Custodian CRUD
+  createItem: (data) => api.post('/inventory', data),
+  updateItem: (id, data) => api.put(`/inventory/${id}`, data),
+  deleteItem: (id) => api.delete(`/inventory/${id}`),
+
+  // Image upload — multipart/form-data
+  uploadImage: (id, file) => {
+    const formData = new FormData()
+    formData.append('image', file)
+    return api.post(`/inventory/${id}/upload-image`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+}
+
+// Penalty endpoints
+export const penaltyService = {
+  getUserPenalties: (userId) => api.get(`/users/${userId}/penalties`),
+}
+
+// Payment endpoints
+export const paymentService = {
+  initiate: (loanId, amount) => api.post('/payments/initiate', { loanId, amount }),
+  getHistory: () => api.get('/payments/history'),
 }
 
 export default api
+

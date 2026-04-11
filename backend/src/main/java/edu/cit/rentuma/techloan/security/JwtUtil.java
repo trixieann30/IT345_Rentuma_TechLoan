@@ -27,11 +27,11 @@ public class JwtUtil {
 
     // ── Key ─────────────────────────────────────────────
     private SecretKey getSigningKey() {
-        byte[] keyBytes = secret.getBytes();
+        byte[] keyBytes = Decoders.BASE64.decode(secret); // <-- THE FIX
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // ── Generate Tokens ──────────────────────────────────
+    // ── Generate Tokens ──────────────────────────────────────────────
     public String generateToken(String email, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
@@ -55,10 +55,6 @@ public class JwtUtil {
     // ── Extract Claims ───────────────────────────────────
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
-    }
-
-    public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

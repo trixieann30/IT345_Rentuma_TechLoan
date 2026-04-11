@@ -84,8 +84,7 @@ public class InventoryController {
         return ResponseEntity.ok(categories);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // POST /api/inventory  –  Add new item (custodian only)
+
     // ─────────────────────────────────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<?> createItem(
@@ -114,6 +113,7 @@ public class InventoryController {
         InventoryItem saved = inventoryRepository.save(item);
         return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(saved));
     }
+
 
     // ─────────────────────────────────────────────────────────────────────────
     // PUT /api/inventory/{id}  –  Update item (custodian only)
