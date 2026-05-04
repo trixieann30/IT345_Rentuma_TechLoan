@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import LoginPage      from './pages/LoginPage'
-import RegisterPage   from './pages/RegisterPage'
-import DashboardPage  from './pages/DashboardPage'
-import InventoryPage  from './pages/InventoryPage'
+import LoginPage      from './features/auth/LoginPage'
+import RegisterPage   from './features/auth/RegisterPage'
+import DashboardPage  from './features/dashboard/DashboardPage'
+import InventoryPage  from './features/inventory/InventoryPage'
 
 // Simple auth guard
 function PrivateRoute({ children }) {
