@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authService, borrowService } from '../services/api'
+import { authService, reservationService } from '../services/api'
 
 export default function DashboardPage() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [borrows, setBorrows] = useState([])
+  const [pendingRequests, setPendingRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [createForm, setCreateForm] = useState({ itemName: '', itemDescription: '', dueDate: '' })
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -43,8 +43,22 @@ export default function DashboardPage() {
 
   async function fetchBorrowRequests() {
     try {
-      const res = await borrowService.getMyRequests()
+      const res = await reservationService.getReservations()
       setBorrows(res.data)
+      
+      // If custodian, also fetch pending requests from all users
+      const stored = localStorage.getItem('user')
+      if (stored) {
+        const userData = JSON.parse(stored)
+        if (userData.role === 'CUSTODIAN') {
+          try {
+            const pendingRes = await reservationService.getReservations('PENDING')
+            setPendingRequests(pendingRes.data)
+          } catch (err) {
+            console.error('Failed to fetch pending requests:', err)
+          }
+        }
+      }
     } catch (err) {
       console.error('Failed to fetch borrow requests:', err)
     } finally {
@@ -52,40 +66,23 @@ export default function DashboardPage() {
     }
   }
 
-  async function handleCreateRequest(e) {
-    e.preventDefault()
-    setSubmitting(true)
-    try {
-      await borrowService.createRequest({
-        itemName: createForm.itemName,
-        itemDescription: createForm.itemDescription,
-        dueDate: createForm.dueDate + 'T23:59:59',
-      })
-      setCreateForm({ itemName: '', itemDescription: '', dueDate: '' })
-      setShowCreateModal(false)
-      fetchBorrowRequests()
-      fetchCurrentUser()
-    } catch (err) {
-      console.error('Failed to create request:', err)
-    } finally {
-      setSubmitting(false)
-    }
-  }
 
   async function handleStatusChange(borrowId, action) {
     try {
       if (action === 'approve') {
-        await borrowService.approveRequest(borrowId)
+        await reservationService.approveReservation(borrowId)
       } else if (action === 'return') {
-        await borrowService.returnRequest(borrowId)
+        await reservationService.returnReservation(borrowId)
       } else if (action === 'overdue') {
-        await borrowService.markOverdue(borrowId)
+        await reservationService.markOverdue(borrowId)
       }
       // Refresh everything immediately after status change
       fetchBorrowRequests()
       fetchCurrentUser()
     } catch (err) {
       console.error('Failed to update request:', err)
+      const errorMessage = err.response?.data || 'Failed to update request. Only custodians can perform this action.'
+      alert(errorMessage)
     }
   }
 
@@ -196,9 +193,13 @@ export default function DashboardPage() {
             <ActionButton 
               title="Request Item" 
               description="Create a new borrow request"
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => navigate('/inventory')}
             />
-            <ActionButton title="View Inventory" description="Explore available tech items" />
+            <ActionButton 
+              title="View Inventory" 
+              description="Explore available tech items"
+              onClick={() => navigate('/inventory')}
+            />
             <ActionButton title="My Activity" description="View your borrowing history" />
           </div>
         </div>
@@ -206,45 +207,84 @@ export default function DashboardPage() {
         {/* Main Content Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Active Loans - Main */}
+          {/* Active Loans or Pending Requests - Main */}
           <div className="lg:col-span-2">
             <div className="card-elevated">
-              <div className="border-b border-gray-200 pb-4 mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Active Loans</h3>
-                <p className="text-gray-600 text-sm mt-1">Items currently borrowed by you</p>
-              </div>
-              
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-primary mx-auto mb-2" />
-                  <p className="text-gray-600 text-sm">Loading loans...</p>
-                </div>
-              ) : activeBorrows.length === 0 ? (
-                <div className="text-center py-16">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
+              {user.role === 'CUSTODIAN' ? (
+                <>
+                  <div className="border-b border-gray-200 pb-4 mb-6">
+                    <h3 className="text-lg font-bold text-gray-900">Pending Requests</h3>
+                    <p className="text-gray-600 text-sm mt-1">All pending borrow requests awaiting your approval</p>
                   </div>
-                  <p className="text-gray-600 font-medium mb-2">No active loans</p>
-                  <p className="text-gray-500 text-sm mb-6">Request a tech item to get started</p>
-                  <button 
-                    onClick={() => setShowCreateModal(true)}
-                    className="btn-primary"
-                  >
-                    Create Request
-                  </button>
-                </div>
+                  
+                  {loading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-primary mx-auto mb-2" />
+                      <p className="text-gray-600 text-sm">Loading pending requests...</p>
+                    </div>
+                  ) : pendingRequests.length === 0 ? (
+                    <div className="text-center py-16">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-600 font-medium mb-2">No pending requests</p>
+                      <p className="text-gray-500 text-sm">All requests have been reviewed</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {pendingRequests.map(request => (
+                        <PendingRequestCard 
+                          key={request.id} 
+                          request={request} 
+                          onStatusChange={handleStatusChange}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               ) : (
-                <div className="space-y-4">
-                  {activeBorrows.map(borrow => (
-                    <LoanCard 
-                      key={borrow.id} 
-                      borrow={borrow} 
-                      onStatusChange={handleStatusChange}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="border-b border-gray-200 pb-4 mb-6">
+                    <h3 className="text-lg font-bold text-gray-900">Active Loans</h3>
+                    <p className="text-gray-600 text-sm mt-1">Items currently borrowed by you</p>
+                  </div>
+                  
+                  {loading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-primary mx-auto mb-2" />
+                      <p className="text-gray-600 text-sm">Loading loans...</p>
+                    </div>
+                  ) : activeBorrows.length === 0 ? (
+                    <div className="text-center py-16">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-600 font-medium mb-2">No active loans</p>
+                      <p className="text-gray-500 text-sm mb-6">Request a tech item to get started</p>
+                      <button 
+                        onClick={() => setShowCreateModal(true)}
+                        className="btn-primary"
+                      >
+                        Create Request
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {activeBorrows.map(borrow => (
+                        <LoanCard 
+                          key={borrow.id} 
+                          borrow={borrow} 
+                          onStatusChange={handleStatusChange}
+                          userRole={user.role}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -270,70 +310,6 @@ export default function DashboardPage() {
         </div>
 
       </div>
-
-      {/* Create Request Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4 z-50">
-          <div className="card-elevated max-w-md w-full">
-            <div className="bg-gradient-to-r from-primary to-primary-light h-1 -m-6 mb-4 rounded-t-2xl" />
-            
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Request New Item</h3>
-            <p className="text-gray-600 text-sm mb-6">Fill in the details to request a tech item</p>
-
-            <form onSubmit={handleCreateRequest} className="space-y-4">
-              <div>
-                <label className="label">Item Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Laptop, Projector, Microphone"
-                  value={createForm.itemName}
-                  onChange={(e) => setCreateForm({ ...createForm, itemName: e.target.value })}
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="label">Description</label>
-                <textarea
-                  placeholder="Tell us about the item you need..."
-                  value={createForm.itemDescription}
-                  onChange={(e) => setCreateForm({ ...createForm, itemDescription: e.target.value })}
-                  className="input-field min-h-24 resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="label">Due Date *</label>
-                <input
-                  type="date"
-                  value={createForm.dueDate}
-                  onChange={(e) => setCreateForm({ ...createForm, dueDate: e.target.value })}
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="flex-1 btn-secondary py-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 btn-primary py-2"
-                >
-                  {submitting ? 'Creating...' : 'Request Item'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -379,7 +355,7 @@ function ActionButton({ title, description, onClick }) {
   )
 }
 
-function LoanCard({ borrow, onStatusChange }) {
+function LoanCard({ borrow, onStatusChange, userRole }) {
   const statusColors = {
     PENDING: 'bg-amber-50 border-amber-200 text-amber-800',
     APPROVED: 'bg-blue-50 border-blue-200 text-blue-800',
@@ -393,6 +369,8 @@ function LoanCard({ borrow, onStatusChange }) {
     RETURNED: 'bg-green-100 text-green-800',
     OVERDUE: 'bg-red-100 text-red-800',
   }
+
+  const isCustodian = userRole === 'CUSTODIAN'
 
   return (
     <div className={`border-2 rounded-lg p-4 ${statusColors[borrow.status]}`}>
@@ -417,32 +395,90 @@ function LoanCard({ borrow, onStatusChange }) {
         </div>
       </div>
 
+      {isCustodian ? (
+        <div className="flex gap-2">
+          {borrow.status === 'PENDING' && (
+            <button
+              onClick={() => onStatusChange(borrow.id, 'approve')}
+              className="flex-1 px-3 py-2 bg-blue-500 text-white rounded font-medium text-sm hover:bg-blue-600 transition-colors"
+            >
+              Approve
+            </button>
+          )}
+          {(borrow.status === 'APPROVED' || borrow.status === 'PENDING') && (
+            <>
+              <button
+                onClick={() => onStatusChange(borrow.id, 'return')}
+                className="flex-1 px-3 py-2 bg-green-500 text-white rounded font-medium text-sm hover:bg-green-600 transition-colors"
+              >
+                Return
+              </button>
+              <button
+                onClick={() => onStatusChange(borrow.id, 'overdue')}
+                className="flex-1 px-3 py-2 bg-red-500 text-white rounded font-medium text-sm hover:bg-red-600 transition-colors"
+                title="Mark as overdue to apply penalty points"
+              >
+                Mark Overdue
+              </button>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-xs text-blue-800">
+            <strong>Note:</strong> Only custodians can approve, return, or mark items as overdue.
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PendingRequestCard({ request, onStatusChange }) {
+  return (
+    <div className="border-2 border-amber-200 bg-amber-50 rounded-lg p-4">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h4 className="font-bold text-gray-900">{request.itemName}</h4>
+          <p className="text-sm text-gray-700 mt-1">Student: {request.userEmail}</p>
+          {request.itemDescription && (
+            <p className="text-sm text-gray-700 mt-2"><strong>Details:</strong> {request.itemDescription}</p>
+          )}
+        </div>
+        <span className="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-amber-100 text-amber-800">
+          PENDING
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
+        <div>
+          <p className="text-gray-600">Due Date</p>
+          <p className="font-medium text-gray-900">{new Date(request.dueDate).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <p className="text-gray-600">Requested</p>
+          <p className="font-medium text-gray-900">{new Date(request.createdAt).toLocaleDateString()}</p>
+        </div>
+      </div>
+
       <div className="flex gap-2">
-        {borrow.status === 'PENDING' && (
-          <button
-            onClick={() => onStatusChange(borrow.id, 'approve')}
-            className="flex-1 px-3 py-2 bg-blue-500 text-white rounded font-medium text-sm hover:bg-blue-600 transition-colors"
-          >
-            Approve
-          </button>
-        )}
-        {(borrow.status === 'APPROVED' || borrow.status === 'PENDING') && (
-          <>
-            <button
-              onClick={() => onStatusChange(borrow.id, 'return')}
-              className="flex-1 px-3 py-2 bg-green-500 text-white rounded font-medium text-sm hover:bg-green-600 transition-colors"
-            >
-              Return
-            </button>
-            <button
-              onClick={() => onStatusChange(borrow.id, 'overdue')}
-              className="flex-1 px-3 py-2 bg-red-500 text-white rounded font-medium text-sm hover:bg-red-600 transition-colors"
-              title="This will trigger the Observer Pattern - watch your penalty points increase!"
-            >
-              Mark Overdue
-            </button>
-          </>
-        )}
+        <button
+          onClick={() => onStatusChange(request.id, 'approve')}
+          className="flex-1 px-3 py-2 bg-blue-500 text-white rounded font-medium text-sm hover:bg-blue-600 transition-colors"
+        >
+          ✓ Approve
+        </button>
+        <button
+          onClick={() => {
+            if (confirm('Reject this request? The student will be notified.')) {
+              // For now, we'll just show a message - you can add a reject endpoint later
+              alert('Request rejection feature coming soon')
+            }
+          }}
+          className="flex-1 px-3 py-2 bg-red-500 text-white rounded font-medium text-sm hover:bg-red-600 transition-colors"
+        >
+          ✕ Reject
+        </button>
       </div>
     </div>
   )
