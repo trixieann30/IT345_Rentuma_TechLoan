@@ -3,11 +3,13 @@ package edu.cit.rentuma.techloan.features.inventory;
 import edu.cit.rentuma.techloan.features.inventory.model.InventoryItem;
 import edu.cit.rentuma.techloan.features.inventory.repository.InventoryRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Profile("!test")
 public class InventoryInitializer implements CommandLineRunner {
 
     private final InventoryRepository inventoryRepository;
