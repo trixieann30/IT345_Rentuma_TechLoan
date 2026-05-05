@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.example.techloan.features.auth.LoginActivity
+import com.example.techloan.features.dashboard.DashboardActivity
 
 class SplashActivity : AppCompatActivity() {
 
@@ -12,7 +14,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // Check for saved token
         val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
         val token = prefs.getString("jwt_token", null)
 
