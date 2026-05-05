@@ -178,7 +178,7 @@ export default function DashboardPage() {
 
         <div className="mb-10">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <ActionButton
               title="Request Item"
               description="Create a new borrow request"
@@ -189,7 +189,16 @@ export default function DashboardPage() {
               description="Explore available tech items"
               onClick={() => navigate('/inventory')}
             />
-            <ActionButton title="My Activity" description="View your borrowing history" />
+            <ActionButton
+              title="My Activity"
+              description="View your borrowing history"
+              onClick={() => navigate('/profile')}
+            />
+            <ActionButton
+              title="My Penalties"
+              description="View and pay penalty fines"
+              onClick={() => navigate('/penalties')}
+            />
           </div>
         </div>
 
@@ -290,7 +299,7 @@ export default function DashboardPage() {
                   />
                 ))}
               </div>
-              <button className="w-full mt-6 btn-secondary py-2">View All Activity</button>
+              <button onClick={() => navigate('/profile')} className="w-full mt-6 btn-secondary py-2">View All Activity</button>
             </div>
           </div>
         </div>

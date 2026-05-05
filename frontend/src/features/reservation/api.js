@@ -8,6 +8,6 @@ export const reservationService = {
   rejectReservation:  (id, reason)   => api.put(`/reservations/${id}/reject`, { reason }),
   returnReservation:  (id)           => api.put(`/reservations/${id}/return`),
   markOverdue:        (id)           => api.put(`/reservations/${id}/overdue`),
-  getQR:              (id)           => api.get(`/reservations/${id}/qr`),
+  getQR:              (id)           => api.get(`/reservations/${id}/qr`, { responseType: 'blob' }),
   downloadSlip:       (id)           => api.get(`/reservations/${id}/slip`, { responseType: 'blob' }),
 }

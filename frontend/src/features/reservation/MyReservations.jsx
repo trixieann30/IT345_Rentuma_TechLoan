@@ -50,7 +50,8 @@ export default function MyReservations() {
   const handleViewQR = async (r) => {
     try {
       const res = await reservationService.getQR(r.id)
-      setQrModal({ ...r, ...res.data })
+      const qrCodeUrl = window.URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
+      setQrModal({ ...r, qrCodeUrl })
     } catch {
       setError('Failed to load QR code.')
     }

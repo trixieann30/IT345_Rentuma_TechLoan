@@ -14,7 +14,9 @@ import edu.cit.rentuma.techloan.features.reservation.validator.BorrowRequestVali
 import edu.cit.rentuma.techloan.features.reservation.validator.ValidationException;
 import edu.cit.rentuma.techloan.shared.factory.DTOFactory;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,19 +36,25 @@ public class BorrowController {
     private final BorrowRequestRepository borrowRequestRepository;
     private final DTOFactory dtoFactory;
     private final BorrowRequestValidator borrowRequestValidatorChain;
+    private final QrCodeService qrCodeService;
+    private final BorrowingSlipService borrowingSlipService;
 
     public BorrowController(LoanService loanService,
                              UserRepository userRepository,
                              InventoryRepository inventoryRepository,
                              BorrowRequestRepository borrowRequestRepository,
                              DTOFactory dtoFactory,
-                             BorrowRequestValidator borrowRequestValidatorChain) {
+                             BorrowRequestValidator borrowRequestValidatorChain,
+                             QrCodeService qrCodeService,
+                             BorrowingSlipService borrowingSlipService) {
         this.loanService                 = loanService;
         this.userRepository              = userRepository;
         this.inventoryRepository         = inventoryRepository;
         this.borrowRequestRepository     = borrowRequestRepository;
         this.dtoFactory                  = dtoFactory;
         this.borrowRequestValidatorChain = borrowRequestValidatorChain;
+        this.qrCodeService               = qrCodeService;
+        this.borrowingSlipService        = borrowingSlipService;
     }
 
     @PostMapping
@@ -206,6 +214,49 @@ public class BorrowController {
 
         BorrowRequest updated = loanService.updateStatus(id, BorrowStatus.OVERDUE);
         return ResponseEntity.ok(dtoFactory.toBorrowRequestDTO(updated));
+    }
+
+    @GetMapping("/{id}/slip")
+    public ResponseEntity<?> getReservationSlip(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        BorrowRequest request = loanService.getBorrowRequest(id);
+        User user = resolveUser(userDetails);
+
+        if (user.getRole() != User.Role.CUSTODIAN
+                && !request.getUserId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Access denied"));
+        }
+
+        byte[] pdf = borrowingSlipService.generateSlip(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "borrowing-slip-" + id + ".pdf");
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/qr")
+    public ResponseEntity<?> getReservationQr(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        BorrowRequest request = loanService.getBorrowRequest(id);
+        User user = resolveUser(userDetails);
+
+        if (user.getRole() != User.Role.CUSTODIAN
+                && !request.getUserId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Access denied"));
+        }
+
+        byte[] qrPng = qrCodeService.generateQrPng("TECHLOAN-RESERVATION-" + id, 300);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        return new ResponseEntity<>(qrPng, headers, HttpStatus.OK);
     }
 
     private User resolveUser(UserDetails userDetails) {

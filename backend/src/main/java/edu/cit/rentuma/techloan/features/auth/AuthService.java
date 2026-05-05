@@ -3,6 +3,7 @@ package edu.cit.rentuma.techloan.features.auth;
 import edu.cit.rentuma.techloan.features.auth.dto.*;
 import edu.cit.rentuma.techloan.features.auth.model.RefreshToken;
 import edu.cit.rentuma.techloan.features.auth.model.User;
+import edu.cit.rentuma.techloan.features.auth.observer.AuthEventPublisher;
 import edu.cit.rentuma.techloan.features.auth.repository.RefreshTokenRepository;
 import edu.cit.rentuma.techloan.features.auth.repository.UserRepository;
 import edu.cit.rentuma.techloan.features.auth.validator.RegistrationValidator;
@@ -21,17 +22,20 @@ public class AuthService {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RegistrationValidator validator;
+    private final AuthEventPublisher authEventPublisher;
 
     public AuthService(UserRepository userRepository,
                        RefreshTokenRepository refreshTokenRepository,
                        org.springframework.security.crypto.password.PasswordEncoder passwordEncoder,
                        JwtUtil jwtUtil,
-                       RegistrationValidator validator) {
+                       RegistrationValidator validator,
+                       AuthEventPublisher authEventPublisher) {
         this.userRepository         = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder        = passwordEncoder;
         this.jwtUtil                = jwtUtil;
         this.validator              = validator;
+        this.authEventPublisher     = authEventPublisher;
     }
 
     @Transactional
@@ -50,6 +54,7 @@ public class AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
+        authEventPublisher.publishRegisterSuccess(savedUser);
 
         String token        = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().name());
         String refreshToken = jwtUtil.generateRefreshToken(savedUser.getEmail());
