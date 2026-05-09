@@ -6,13 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.techloan.shared.model.LoginRequest
 import com.example.techloan.shared.model.RegisterRequest
+import com.example.techloan.shared.model.UserDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
 
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
-    data class Success(val token: String, val message: String?) : AuthState()
+    data class Success(val token: String, val message: String?, val user: UserDto? = null) : AuthState()
     data class Error(val message: String) : AuthState()
 }
 
@@ -74,7 +75,7 @@ class AuthViewModel : ViewModel() {
                     val body = response.body()
                     val token = body?.token ?: ""
                     android.util.Log.d("AUTH_LOGIN", "Login successful")
-                    _authState.value = AuthState.Success(token, "Login successful!")
+                    _authState.value = AuthState.Success(token, "Login successful!", body?.user)
                 } else {
                     val errorBody = response.errorBody()?.string() ?: ""
                     android.util.Log.d("AUTH_LOGIN", "Login failed - Error body: $errorBody")
