@@ -66,6 +66,9 @@ export default function DashboardPage() {
     try {
       if (action === 'approve') {
         await reservationService.approveReservation(borrowId)
+      } else if (action === 'reject') {
+        const reason = window.prompt('Reason for rejection (optional):') ?? ''
+        await reservationService.rejectReservation(borrowId, reason)
       } else if (action === 'return') {
         await reservationService.returnReservation(borrowId)
       } else if (action === 'overdue') {
@@ -132,7 +135,7 @@ export default function DashboardPage() {
           <h2 className="text-4xl font-bold text-gray-900">
             Welcome back, <span className="text-primary">{user.fullName?.split(' ')[0]}</span>
           </h2>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 mt-2 flex items-center gap-2">
             <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold mr-2">
               {user.role}
             </span>
@@ -178,28 +181,53 @@ export default function DashboardPage() {
 
         <div className="mb-10">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <ActionButton
-              title="Request Item"
-              description="Create a new borrow request"
-              onClick={() => navigate('/inventory')}
-            />
-            <ActionButton
-              title="View Inventory"
-              description="Explore available tech items"
-              onClick={() => navigate('/inventory')}
-            />
-            <ActionButton
-              title="My Activity"
-              description="View your borrowing history"
-              onClick={() => navigate('/profile')}
-            />
-            <ActionButton
-              title="My Penalties"
-              description="View and pay penalty fines"
-              onClick={() => navigate('/penalties')}
-            />
-          </div>
+          {user.role === 'CUSTODIAN' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <ActionButton
+                title="Manage Reservations"
+                description="Approve, reject and track all requests"
+                onClick={() => navigate('/reservation-queue')}
+              />
+              <ActionButton
+                title="Scan QR Code"
+                description="Upload a student's QR to process it"
+                onClick={() => navigate('/qr-scan')}
+              />
+              <ActionButton
+                title="Overdue Tracker"
+                description="View and resolve overdue items"
+                onClick={() => navigate('/overdue-tracker')}
+              />
+              <ActionButton
+                title="My Account"
+                description="View your profile"
+                onClick={() => navigate('/profile')}
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <ActionButton
+                title="Request Item"
+                description="Create a new borrow request"
+                onClick={() => navigate('/inventory')}
+              />
+              <ActionButton
+                title="My Reservations"
+                description="View and download your borrowing slips"
+                onClick={() => navigate('/my-reservations')}
+              />
+              <ActionButton
+                title="My Activity"
+                description="View your borrowing history"
+                onClick={() => navigate('/profile')}
+              />
+              <ActionButton
+                title="My Penalties"
+                description="View and pay penalty fines"
+                onClick={() => navigate('/penalties')}
+              />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -461,11 +489,7 @@ function PendingRequestCard({ request, onStatusChange }) {
           ✓ Approve
         </button>
         <button
-          onClick={() => {
-            if (confirm('Reject this request? The student will be notified.')) {
-              alert('Request rejection feature coming soon')
-            }
-          }}
+          onClick={() => onStatusChange(request.id, 'reject')}
           className="flex-1 px-3 py-2 bg-red-500 text-white rounded font-medium text-sm hover:bg-red-600 transition-colors"
         >
           ✕ Reject

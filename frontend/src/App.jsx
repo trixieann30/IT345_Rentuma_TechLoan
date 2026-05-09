@@ -1,11 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import LoginPage      from './features/auth/LoginPage'
-import RegisterPage   from './features/auth/RegisterPage'
-import DashboardPage  from './features/dashboard/DashboardPage'
-import InventoryPage  from './features/inventory/InventoryPage'
-import ProfilePage    from './features/profile/ProfilePage'
-import PenaltyPage    from './features/penalty/PenaltyPage'
+import LoginPage          from './features/auth/LoginPage'
+import RegisterPage       from './features/auth/RegisterPage'
+import DashboardPage      from './features/dashboard/DashboardPage'
+import InventoryPage      from './features/inventory/InventoryPage'
+import ProfilePage        from './features/profile/ProfilePage'
+import PenaltyPage        from './features/penalty/PenaltyPage'
+import MyReservations     from './features/reservation/MyReservations'
+import ReservationQueue   from './features/reservation/ReservationQueue'
+import OverdueTracker     from './features/reservation/OverdueTracker'
+import QRScanPage         from './features/reservation/QRScanPage'
 
 // Simple auth guard
 function PrivateRoute({ children }) {
@@ -38,6 +42,26 @@ export default function App() {
         <Route path="/penalties"  element={
           <PrivateRoute>
             <PenaltyPage />
+          </PrivateRoute>
+        } />
+        <Route path="/my-reservations" element={
+          <PrivateRoute>
+            <MyReservations />
+          </PrivateRoute>
+        } />
+        <Route path="/reservation-queue" element={
+          <PrivateRoute>
+            <ReservationQueue />
+          </PrivateRoute>
+        } />
+        <Route path="/overdue-tracker" element={
+          <PrivateRoute>
+            <OverdueTracker />
+          </PrivateRoute>
+        } />
+        <Route path="/qr-scan" element={
+          <PrivateRoute>
+            <QRScanPage />
           </PrivateRoute>
         } />
       </Routes>

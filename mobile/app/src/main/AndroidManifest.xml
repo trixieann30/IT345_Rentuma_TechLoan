@@ -3,6 +3,7 @@
     package="com.example.techloan">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -21,9 +22,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LoginActivity" android:exported="false" />
-        <activity android:name=".RegisterActivity" android:exported="false" />
-        <activity android:name=".DashboardActivity" android:exported="false" />
+        <activity android:name=".features.auth.LoginActivity"    android:exported="false" />
+        <activity android:name=".features.auth.RegisterActivity"  android:exported="false" />
+        <activity android:name=".features.dashboard.DashboardActivity" android:exported="false" />
+
+        <activity android:name=".features.inventory.InventoryActivity"          android:exported="false" />
+        <activity android:name=".features.reservation.CreateReservationActivity" android:exported="false" />
+        <activity android:name=".features.reservation.MyReservationsActivity"    android:exported="false" />
+        <activity android:name=".features.loans.MyLoansActivity"                 android:exported="false" />
+        <activity android:name=".features.profile.ProfileActivity"               android:exported="false" />
+
+        <activity android:name=".features.custodian.CustodianDashboardActivity"     android:exported="false" />
+        <activity android:name=".features.custodian.PendingReservationsActivity"    android:exported="false" />
+        <activity android:name=".features.custodian.AllLoansManagementActivity"     android:exported="false" />
+        <activity android:name=".features.reservation.QRCodeViewActivity"           android:exported="false" />
+        <activity android:name=".features.custodian.QRScanResultActivity"           android:exported="false" />
 
     </application>
 </manifest>
