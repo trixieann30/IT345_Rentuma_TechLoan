@@ -101,8 +101,9 @@
 
     <!-- Spring Mail -->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-mail</artifactId>
+      <groupId>com.sendgrid</groupId>
+      <artifactId>sendgrid-java</artifactId>
+      <version>4.10.1</version>
     </dependency>
 
     <!-- ZXing QR Code -->
