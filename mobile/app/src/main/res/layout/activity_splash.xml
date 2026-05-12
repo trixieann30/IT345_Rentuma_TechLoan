@@ -4,99 +4,110 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary">
+    android:background="@drawable/bg_splash">
 
-    <!-- Decorative top element -->
+    <!-- Gold accent circle top-right -->
     <View
         android:id="@+id/topDecor"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:background="@color/primary_light"
-        android:alpha="0.3"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:alpha="0.12"
+        android:background="@color/gold"
+        android:importantForAccessibility="no"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.1"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"/>
 
-    <!-- Logo Card -->
+    <!-- Logo circle -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardLogo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="8dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        app:cardCornerRadius="48dp"
+        app:cardElevation="12dp"
         app:cardBackgroundColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/tvAppName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0.4">
+        app:layout_constraintVertical_bias="0.38">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="sans-serif-black"
             android:text="T"
             android:textColor="@color/primary"
-            android:textSize="44sp"
-            android:fontFamily="sans-serif-bold"/>
+            android:textSize="42sp"/>
     </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TechLoan"
-        android:textColor="@color/white"
-        android:textSize="42sp"
+        android:layout_marginTop="14dp"
         android:fontFamily="sans-serif-bold"
         android:letterSpacing="0.02"
+        android:text="TechLoan"
+        android:textColor="@color/white"
+        android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@id/tvSubtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardLogo"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:layout_marginTop="12dp"/>
+        app:layout_constraintTop_toBottomOf="@id/cardLogo"/>
 
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lab Equipment Management"
-        android:textColor="#FFEBEE"
-        android:textSize="12sp"
+        android:layout_marginTop="4dp"
+        android:alpha="0.75"
         android:fontFamily="sans-serif-light"
-        android:letterSpacing="0.1"
-        app:layout_constraintTop_toBottomOf="@id/tvAppName"
+        android:letterSpacing="0.08"
+        android:text="Lab Equipment Management"
+        android:textColor="@color/white"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintTop_toBottomOf="@id/tvAppName"/>
+
+    <!-- Gold accent line below subtitle -->
+    <View
+        android:id="@+id/accentLine"
+        android:layout_width="40dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.8"
+        android:background="@color/gold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"/>
 
     <TextView
         android:id="@+id/tvTagline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CIT-U Lab Equipment Borrowing"
-        android:textColor="#FFCCCC"
-        android:textSize="13sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="20dp"
+        android:alpha="0.6"
+        android:fontFamily="sans-serif"
+        android:text="CIT-U · Cebu Institute of Technology"
+        android:textColor="@color/white"
+        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
-        app:layout_constraintVertical_bias="0.6"/>
+        app:layout_constraintTop_toBottomOf="@id/accentLine"/>
 
-    <!-- Decorative bottom element -->
+    <!-- Bottom decorative circle -->
     <View
         android:id="@+id/bottomDecor"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginBottom="304dp"
-        android:alpha="0.2"
-        android:background="@color/primary_light"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="0dp"
+        android:alpha="0.08"
+        android:background="@color/gold"
+        android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

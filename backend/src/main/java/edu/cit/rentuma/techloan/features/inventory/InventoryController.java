@@ -169,6 +169,7 @@ public class InventoryController {
         dto.setAvailableQuantity(item.getAvailableQuantity());
         dto.setSpecifications(item.getSpecifications());
         dto.setImageUrl(item.getImageUrl());
+        dto.setUserProvidedImage(Boolean.TRUE.equals(item.getUserProvidedImage()));
         return dto;
     }
 }

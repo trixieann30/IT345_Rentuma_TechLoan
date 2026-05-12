@@ -4,16 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_50">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:background="@color/primary"
         android:elevation="4dp"
         app:title="Borrow Item"
-        app:titleTextColor="@color/primary"/>
+        app:titleTextColor="@color/white"
+        app:navigationIconTint="@color/white"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,60 +25,75 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="14dp">
 
-            <!-- Item Info Card -->
+            <!-- Item info card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="14dp"
                 app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Item"
-                        android:textColor="@color/gray_600"
-                        android:textSize="11sp"
-                        android:fontFamily="sans-serif-medium"/>
-                    <TextView
-                        android:id="@+id/tvItemName"
+                    android:orientation="vertical">
+
+                    <!-- Crimson accent strip -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:background="@color/primary"/>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="sans-serif-bold"
-                        android:text="Item Name"
-                        android:textColor="@color/gray_900"
-                        android:textSize="18sp"/>
-                    <TextView
-                        android:id="@+id/tvMaxQty"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Max available: 0"
-                        android:textColor="@color/green_600"
-                        android:textSize="12sp"/>
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ITEM"
+                            android:textColor="@color/gray_400"
+                            android:textSize="10sp"
+                            android:fontFamily="sans-serif-bold"
+                            android:letterSpacing="0.1"
+                            android:layout_marginBottom="4dp"/>
+                        <TextView
+                            android:id="@+id/tvItemName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Item Name"
+                            android:textColor="@color/gray_900"
+                            android:textSize="20sp"/>
+                        <TextView
+                            android:id="@+id/tvMaxQty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Max available: 0"
+                            android:textColor="@color/green_600"
+                            android:textSize="13sp"
+                            android:fontFamily="sans-serif-medium"/>
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Form Card -->
+            <!-- Form card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="18dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -85,13 +101,13 @@
                         android:layout_marginBottom="6dp"
                         android:fontFamily="sans-serif-medium"
                         android:text="Quantity"
-                        android:textColor="@color/gray_900"
+                        android:textColor="@color/gray_700"
                         android:textSize="12sp"/>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.TechLoan.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="14dp">
+                        android:layout_marginBottom="16dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etQuantity"
                             android:layout_width="match_parent"
@@ -106,13 +122,13 @@
                         android:layout_marginBottom="6dp"
                         android:fontFamily="sans-serif-medium"
                         android:text="Purpose"
-                        android:textColor="@color/gray_900"
+                        android:textColor="@color/gray_700"
                         android:textSize="12sp"/>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.TechLoan.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="14dp">
+                        android:layout_marginBottom="16dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPurpose"
                             android:layout_width="match_parent"
@@ -125,10 +141,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
+                        android:layout_marginBottom="8dp"
                         android:fontFamily="sans-serif-medium"
                         android:text="Return Date"
-                        android:textColor="@color/gray_900"
+                        android:textColor="@color/gray_700"
                         android:textSize="12sp"/>
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPickDate"
@@ -141,7 +157,7 @@
                         android:id="@+id/tvSelectedDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="18dp"
                         android:fontFamily="sans-serif-medium"
                         android:text=""
                         android:textColor="@color/primary"
@@ -160,8 +176,9 @@
                         android:id="@+id/btnSubmit"
                         style="@style/Widget.TechLoan.Button"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Submit Request"/>
+                        android:layout_height="50dp"
+                        android:text="Submit Request"
+                        android:textSize="15sp"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

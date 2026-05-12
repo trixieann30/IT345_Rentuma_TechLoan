@@ -10,6 +10,7 @@ import com.example.techloan.databinding.ActivityDashboardBinding
 import com.example.techloan.features.auth.LoginActivity
 import com.example.techloan.features.inventory.InventoryActivity
 import com.example.techloan.features.loans.MyLoansActivity
+import com.example.techloan.features.notification.NotificationActivity
 import com.example.techloan.features.profile.ProfileActivity
 import com.example.techloan.features.reservation.MyReservationsActivity
 import com.example.techloan.shared.network.RetrofitClient
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardBinding
+    private lateinit var token: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +28,16 @@ class DashboardActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
         val userName = prefs.getString("user_name", "User") ?: "User"
+        token = "Bearer ${prefs.getString("jwt_token", "") ?: ""}"
         binding.tvWelcome.text = "👋 Hello, ${userName.split(" ").first()}!"
 
         binding.toolbar.inflateMenu(R.menu.menu_dashboard)
         binding.toolbar.setOnMenuItemClickListener { item ->
             if (item.itemId == R.id.action_logout) { logout(); true } else false
+        }
+
+        binding.btnNotifications.setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
         }
 
         binding.btnLogout.setOnClickListener { logout() }
@@ -56,11 +63,28 @@ class DashboardActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadRecentActivity()
+        loadUnreadCount()
+    }
+
+    private fun loadUnreadCount() {
+        lifecycleScope.launch {
+            try {
+                val res = RetrofitClient.api.getUnreadCount(token)
+                if (res.isSuccessful) {
+                    val count = res.body()?.count ?: 0L
+                    if (count > 0L) {
+                        binding.tvNotifBadge.text = if (count > 9) "9+" else count.toString()
+                        binding.tvNotifBadge.visibility = View.VISIBLE
+                    } else {
+                        binding.tvNotifBadge.visibility = View.GONE
+                    }
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     private fun loadRecentActivity() {
         val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
-        val token = "Bearer ${prefs.getString("jwt_token", "") ?: ""}"
         val userId = prefs.getLong("user_id", 0L)
         if (userId == 0L) return
 

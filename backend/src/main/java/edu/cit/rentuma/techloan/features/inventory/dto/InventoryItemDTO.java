@@ -12,6 +12,7 @@ public class InventoryItemDTO {
     private Integer availableQuantity;
     private String specifications;
     private String imageUrl;
+    private Boolean userProvidedImage;
 
     public InventoryItemDTO() {}
 
@@ -51,4 +52,6 @@ public class InventoryItemDTO {
     public void setSpecifications(String specifications)         { this.specifications = specifications; }
     public String getImageUrl()                                  { return imageUrl; }
     public void setImageUrl(String imageUrl)                     { this.imageUrl = imageUrl; }
+    public Boolean getUserProvidedImage()                        { return userProvidedImage; }
+    public void setUserProvidedImage(Boolean v)                  { this.userProvidedImage = v; }
 }

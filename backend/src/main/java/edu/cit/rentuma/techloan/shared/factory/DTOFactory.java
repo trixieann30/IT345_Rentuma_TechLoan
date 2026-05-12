@@ -1,5 +1,6 @@
 package edu.cit.rentuma.techloan.shared.factory;
 
+import edu.cit.rentuma.techloan.features.auth.repository.UserRepository;
 import edu.cit.rentuma.techloan.features.loan.dto.LoanDTO;
 import edu.cit.rentuma.techloan.features.loan.model.Loan;
 import edu.cit.rentuma.techloan.features.penalty.dto.PenaltyDTO;
@@ -14,8 +15,14 @@ import java.time.temporal.ChronoUnit;
 @Component
 public class DTOFactory {
 
+    private final UserRepository userRepository;
+
+    public DTOFactory(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public BorrowRequestDTO toBorrowRequestDTO(BorrowRequest borrow) {
-        return new BorrowRequestDTO(
+        BorrowRequestDTO dto = new BorrowRequestDTO(
                 borrow.getId(),
                 borrow.getUserId(),
                 borrow.getUserEmail(),
@@ -31,6 +38,11 @@ public class DTOFactory {
                 borrow.getActualReturnDate(),
                 borrow.getCreatedAt()
         );
+        userRepository.findById(borrow.getUserId()).ifPresent(u -> {
+            dto.setBorrowerName(u.getFullName());
+            dto.setBorrowerRole(u.getRole().name());
+        });
+        return dto;
     }
 
     public LoanDTO toLoanDTO(Loan loan, String borrowerName, Integer penaltyPoints) {

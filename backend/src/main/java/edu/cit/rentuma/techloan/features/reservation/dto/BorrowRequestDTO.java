@@ -10,6 +10,8 @@ public class BorrowRequestDTO {
     private Long id;
     private Long userId;
     private String userEmail;
+    private String borrowerName;
+    private String borrowerRole;
     private Long inventoryId;
     private Integer quantity;
     private String purpose;
@@ -53,6 +55,10 @@ public class BorrowRequestDTO {
     public void setUserId(Long userId)                      { this.userId = userId; }
     public String getUserEmail()                            { return userEmail; }
     public void setUserEmail(String userEmail)              { this.userEmail = userEmail; }
+    public String getBorrowerName()                         { return borrowerName; }
+    public void setBorrowerName(String borrowerName)        { this.borrowerName = borrowerName; }
+    public String getBorrowerRole()                         { return borrowerRole; }
+    public void setBorrowerRole(String borrowerRole)        { this.borrowerRole = borrowerRole; }
     public Long getInventoryId()                            { return inventoryId; }
     public void setInventoryId(Long inventoryId)            { this.inventoryId = inventoryId; }
     public Integer getQuantity()                            { return quantity; }

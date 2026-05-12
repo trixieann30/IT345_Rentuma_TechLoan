@@ -7,8 +7,10 @@ import com.example.techloan.shared.model.GoogleAuthRequestDto
 import com.example.techloan.shared.model.InventoryItemDto
 import com.example.techloan.shared.model.LoanDto
 import com.example.techloan.shared.model.LoginRequest
+import com.example.techloan.shared.model.NotificationDto
 import com.example.techloan.shared.model.PenaltySummaryDto
 import com.example.techloan.shared.model.RegisterRequest
+import com.example.techloan.shared.model.UnreadCountDto
 import com.example.techloan.shared.model.UserDto
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -95,4 +97,25 @@ interface TechLoanApi {
         @Header("Authorization") token: String,
         @Path("id") id: Long
     ): Response<PenaltySummaryDto>
+
+    @GET("notifications")
+    suspend fun getNotifications(
+        @Header("Authorization") token: String
+    ): Response<List<NotificationDto>>
+
+    @GET("notifications/unread-count")
+    suspend fun getUnreadCount(
+        @Header("Authorization") token: String
+    ): Response<UnreadCountDto>
+
+    @PUT("notifications/{id}/read")
+    suspend fun markNotificationRead(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): Response<Void>
+
+    @PUT("notifications/read-all")
+    suspend fun markAllNotificationsRead(
+        @Header("Authorization") token: String
+    ): Response<Void>
 }
