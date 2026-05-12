@@ -5,6 +5,8 @@ import edu.cit.rentuma.techloan.features.payment.model.Payment;
 import edu.cit.rentuma.techloan.features.payment.repository.PaymentRepository;
 import edu.cit.rentuma.techloan.features.penalty.model.Penalty;
 import edu.cit.rentuma.techloan.features.penalty.repository.PenaltyRepository;
+import edu.cit.rentuma.techloan.features.auth.model.User;
+import edu.cit.rentuma.techloan.features.auth.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +19,17 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PenaltyRepository penaltyRepository;
+    private final UserRepository userRepository;
+    private final PayMongoService payMongoService;
 
     public PaymentService(PaymentRepository paymentRepository,
-                          PenaltyRepository penaltyRepository) {
+                          PenaltyRepository penaltyRepository,
+                          UserRepository userRepository,
+                          PayMongoService payMongoService) {
         this.paymentRepository = paymentRepository;
         this.penaltyRepository = penaltyRepository;
+        this.userRepository    = userRepository;
+        this.payMongoService   = payMongoService;
     }
 
     @Transactional
@@ -37,13 +45,26 @@ public class PaymentService {
             throw new IllegalStateException("A pending payment already exists for this penalty");
         }
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
         Payment payment = new Payment();
         payment.setUserId(userId);
         payment.setPenaltyId(penaltyId);
         payment.setAmount(penalty.getPenaltyPoints());
         payment.setStatus(Payment.PaymentStatus.PENDING);
+        payment = paymentRepository.save(payment);
 
-        return PaymentDTO.from(paymentRepository.save(payment));
+        PayMongoService.CheckoutResult checkout = payMongoService.createCheckoutSession(
+                penalty.getPenaltyPoints(), payment.getId(),
+                user.getEmail(), user.getFullName());
+
+        payment.setGatewaySessionId(checkout.sessionId());
+        paymentRepository.save(payment);
+
+        PaymentDTO dto = PaymentDTO.from(payment);
+        dto.setCheckoutUrl(checkout.checkoutUrl());
+        return dto;
     }
 
     @Transactional
@@ -53,6 +74,13 @@ public class PaymentService {
 
         if (payment.getStatus() == Payment.PaymentStatus.PAID) {
             throw new IllegalStateException("Payment is already confirmed");
+        }
+
+        if (payment.getGatewaySessionId() != null) {
+            boolean paid = payMongoService.verifyPayment(payment.getGatewaySessionId());
+            if (!paid) {
+                throw new IllegalStateException("PayMongo payment has not been completed yet");
+            }
         }
 
         payment.setStatus(Payment.PaymentStatus.PAID);

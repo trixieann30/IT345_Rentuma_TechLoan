@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_50">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/amber_600"
+        android:background="@color/primary"
         android:elevation="4dp"
         app:title="Scan Result"
         app:titleTextColor="@color/white"
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:indeterminateTint="@color/amber_600"
+        android:indeterminateTint="@color/primary"
         android:visibility="visible"/>
 
     <ScrollView
@@ -35,76 +35,100 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="14dp">
 
+            <!-- Reservation detail card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="14dp"
                 app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvItemName"
-                        android:layout_width="wrap_content"
+                    <!-- Gradient accent strip -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:background="@color/primary"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-bold"
-                        android:textColor="@color/gray_900"
-                        android:textSize="18sp"
-                        android:layout_marginBottom="4dp"/>
+                        android:orientation="vertical"
+                        android:padding="18dp">
 
-                    <TextView
-                        android:id="@+id/tvStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-bold"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:textSize="12sp"
-                        android:layout_marginBottom="12dp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="14dp">
 
-                    <TextView
-                        android:id="@+id/tvBorrower"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/gray_700"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="4dp"/>
+                            <TextView
+                                android:id="@+id/tvItemName"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="sans-serif-bold"
+                                android:textColor="@color/gray_900"
+                                android:textSize="18sp"/>
 
-                    <TextView
-                        android:id="@+id/tvQuantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/gray_700"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="4dp"/>
+                            <TextView
+                                android:id="@+id/tvStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_badge"
+                                android:fontFamily="sans-serif-bold"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                android:textColor="@color/white"
+                                android:textSize="11sp"/>
 
-                    <TextView
-                        android:id="@+id/tvPurpose"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/gray_700"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="4dp"/>
+                        </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvReturnDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/gray_700"
-                        android:textSize="13sp"/>
+                        <TextView
+                            android:id="@+id/tvBorrower"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray_600"
+                            android:textSize="13sp"
+                            android:layout_marginBottom="5dp"/>
 
+                        <TextView
+                            android:id="@+id/tvQuantity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray_600"
+                            android:textSize="13sp"
+                            android:layout_marginBottom="5dp"/>
+
+                        <TextView
+                            android:id="@+id/tvPurpose"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray_600"
+                            android:textSize="13sp"
+                            android:layout_marginBottom="5dp"/>
+
+                        <TextView
+                            android:id="@+id/tvReturnDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray_600"
+                            android:textSize="13sp"/>
+
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Action buttons -->
             <LinearLayout
                 android:id="@+id/actionButtons"
                 android:layout_width="match_parent"
@@ -115,22 +139,22 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnApprove"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Approve"
-                    app:backgroundTint="@color/green_600"/>
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/green_600"
+                    app:cornerRadius="12dp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnReject"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.TechLoan.OutlineButton"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    android:text="Reject"
-                    android:textColor="@color/red_400"
-                    app:strokeColor="@color/red_400"/>
+                    android:layout_marginStart="8dp"
+                    android:text="Reject"/>
 
             </LinearLayout>
 
@@ -142,8 +166,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textColor="@color/red_400"
+        android:textColor="@color/primary"
         android:textSize="14sp"
+        android:gravity="center"
+        android:padding="24dp"
         android:visibility="gone"/>
 
 </RelativeLayout>

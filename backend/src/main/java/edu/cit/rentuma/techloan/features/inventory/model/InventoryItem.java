@@ -37,6 +37,8 @@ public class InventoryItem {
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
+    private Boolean userProvidedImage = false;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -88,6 +90,8 @@ public class InventoryItem {
     public void setSpecifications(String specifications)         { this.specifications = specifications; }
     public String getImageUrl()                                  { return imageUrl; }
     public void setImageUrl(String imageUrl)                     { this.imageUrl = imageUrl; }
+    public Boolean getUserProvidedImage()                        { return userProvidedImage; }
+    public void setUserProvidedImage(Boolean v)                  { this.userProvidedImage = v; }
     public LocalDateTime getCreatedAt()                          { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt)            { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt()                          { return updatedAt; }

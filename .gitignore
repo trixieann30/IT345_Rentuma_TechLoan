@@ -3,6 +3,12 @@ backend/target/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+web/node_modules/
+web/dist/
+web/.vite/
+
+# frontend/ is replaced by web/ — kept locally but excluded from git
+frontend/
 
 # IDE files
 backend/.idea/

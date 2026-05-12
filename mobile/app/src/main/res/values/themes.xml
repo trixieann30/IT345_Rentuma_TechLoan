@@ -5,8 +5,9 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/primary_light</item>
-        <item name="android:windowBackground">@color/gray_50</item>
+        <item name="colorSecondary">@color/gold</item>
+        <item name="colorOnSecondary">@color/gray_900</item>
+        <item name="android:windowBackground">@color/background</item>
     </style>
 
     <style name="Widget.TechLoan.Button" parent="Widget.MaterialComponents.Button">
@@ -14,20 +15,31 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">15sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="cornerRadius">10dp</item>
+        <item name="cornerRadius">12dp</item>
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>
-        <item name="elevation">2dp</item>
+        <item name="elevation">0dp</item>
         <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="Widget.TechLoan.GoldButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/gold</item>
+        <item name="android:textColor">@color/gray_900</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="Widget.TechLoan.OutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/primary</item>
-        <item name="strokeWidth">2dp</item>
+        <item name="strokeWidth">1.5dp</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:textSize">15sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="cornerRadius">10dp</item>
+        <item name="cornerRadius">12dp</item>
     </style>
 
     <style name="Widget.TechLoan.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -36,10 +48,10 @@
         <item name="boxStrokeWidth">1dp</item>
         <item name="hintTextColor">@color/gray_450</item>
         <item name="android:textColorHint">@color/gray_450</item>
-        <item name="boxCornerRadiusTopStart">10dp</item>
-        <item name="boxCornerRadiusTopEnd">10dp</item>
-        <item name="boxCornerRadiusBottomStart">10dp</item>
-        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
         <item name="boxBackgroundColor">@color/white</item>
     </style>
 

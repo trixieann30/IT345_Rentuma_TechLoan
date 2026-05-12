@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 public class GoogleAuthService {
@@ -59,8 +60,15 @@ public class GoogleAuthService {
             String googleId      = payload.getSubject();
             String email         = payload.getEmail();
             String fullName      = (String) payload.get("name");
-            String role          = request.getRole();
-            String personalEmail = request.getPersonalEmail();
+            String role               = request.getRole();
+            String institutionalEmail = request.getInstitutionalEmail();
+
+            if (institutionalEmail != null) {
+                institutionalEmail = institutionalEmail.trim().toLowerCase();
+                if (institutionalEmail.isBlank()) {
+                    institutionalEmail = null;
+                }
+            }
 
             try {
                 User.Role.valueOf(role);
@@ -68,28 +76,53 @@ public class GoogleAuthService {
                 throw new IllegalArgumentException("VALID-005:Invalid role");
             }
 
-            User user = userRepository.findByGoogleId(googleId)
-                    .orElseGet(() -> User.builder()
-                            .fullName(fullName)
-                            .email(email.toLowerCase())
-                            .googleId(googleId)
-                            .role(User.Role.valueOf(role))
-                            .personalEmail(personalEmail)
-                            .penaltyPoints(0)
-                            .build());
+            User user = userRepository.findByGoogleId(googleId).orElse(null);
+            if (user == null) {
+                if (institutionalEmail == null || !institutionalEmail.endsWith("@cit.edu")) {
+                    throw new IllegalArgumentException("AUTH-005:Google registration requires a valid CIT-U email (@cit.edu)");
+                }
 
-            if (user.getId() != null) {
+                user = User.builder()
+                        .fullName(fullName)
+                        .email(email.toLowerCase())
+                        .googleId(googleId)
+                        .role(User.Role.valueOf(role))
+                        .institutionalEmail(institutionalEmail)
+                        .penaltyPoints(0)
+                        .emailVerified(false)
+                        .verificationToken(UUID.randomUUID().toString())
+                        .build();
+            } else {
                 user.setFullName(fullName);
                 user.setEmail(email.toLowerCase());
-                user.setPersonalEmail(personalEmail);
+                if (institutionalEmail != null && !institutionalEmail.equals(user.getInstitutionalEmail())) {
+                    if (!institutionalEmail.endsWith("@cit.edu")) {
+                        throw new IllegalArgumentException("AUTH-005:Google registration requires a valid CIT-U email (@cit.edu)");
+                    }
+                    user.setInstitutionalEmail(institutionalEmail);
+                    user.setEmailVerified(false);
+                    user.setVerificationToken(UUID.randomUUID().toString());
+                }
             }
 
             User savedUser = userRepository.save(user);
 
+            eventPublisher.publishGoogleAuthSuccess(savedUser);
+
+            // If email is not verified, don't return token; ask user to verify first
+            if (!savedUser.isEmailVerified()) {
+                return AuthResponse.builder()
+                        .success(true)
+                        .user(UserResponse.from(savedUser))
+                        .token(null)
+                        .refreshToken(null)
+                        .message("Please verify your CIT-U email. Check your inbox for the verification link.")
+                        .timestamp(LocalDateTime.now().toString())
+                        .build();
+            }
+
             String token        = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().name());
             String refreshToken = jwtUtil.generateRefreshToken(savedUser.getEmail());
-
-            eventPublisher.publishGoogleAuthSuccess(savedUser);
 
             return AuthResponse.builder()
                     .success(true)

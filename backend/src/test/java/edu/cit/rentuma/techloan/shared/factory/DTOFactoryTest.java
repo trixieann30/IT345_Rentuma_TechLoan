@@ -1,5 +1,6 @@
 package edu.cit.rentuma.techloan.shared.factory;
 
+import edu.cit.rentuma.techloan.features.auth.repository.UserRepository;
 import edu.cit.rentuma.techloan.features.loan.dto.LoanDTO;
 import edu.cit.rentuma.techloan.features.loan.model.Loan;
 import edu.cit.rentuma.techloan.features.penalty.dto.PenaltyDTO;
@@ -7,8 +8,11 @@ import edu.cit.rentuma.techloan.features.penalty.model.Penalty;
 import edu.cit.rentuma.techloan.features.reservation.dto.BorrowRequestDTO;
 import edu.cit.rentuma.techloan.features.reservation.model.BorrowRequest;
 import edu.cit.rentuma.techloan.features.reservation.observer.BorrowStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("TC-DP: Factory Pattern — DTOFactory Tests")
 class DTOFactoryTest {
 
-    private final DTOFactory dtoFactory = new DTOFactory();
+    @Mock
+    private UserRepository userRepository;
+
+    private DTOFactory dtoFactory;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        dtoFactory = new DTOFactory(userRepository);
+    }
 
     // TC-DP-004
     @Test

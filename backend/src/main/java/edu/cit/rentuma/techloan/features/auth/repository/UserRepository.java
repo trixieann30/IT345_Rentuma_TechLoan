@@ -13,6 +13,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByGoogleId(String googleId);
 
+    Optional<User> findByVerificationToken(String verificationToken);
+
+    Optional<User> findByPasswordResetToken(String passwordResetToken);
+
     boolean existsByEmail(String email);
 
     boolean existsByStudentId(String studentId);

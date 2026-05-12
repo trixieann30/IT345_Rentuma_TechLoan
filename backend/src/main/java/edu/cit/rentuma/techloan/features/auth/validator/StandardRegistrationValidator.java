@@ -41,7 +41,8 @@ public class StandardRegistrationValidator implements RegistrationValidator {
     }
 
     private void validateNoDuplicateEmail(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String email = request.getEmail().toLowerCase();
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalStateException("DB-002:An account with this email already exists");
         }
     }

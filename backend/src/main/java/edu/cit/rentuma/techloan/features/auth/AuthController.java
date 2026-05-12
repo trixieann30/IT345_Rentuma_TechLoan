@@ -39,11 +39,42 @@ public class AuthController {
         return ResponseEntity.ok(authFacade.getCurrentUser(userDetails.getUsername()));
     }
 
+    @GetMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestParam String token) {
+        authFacade.verifyEmail(token);
+        return ResponseEntity.ok(java.util.Map.of(
+                "success", true,
+                "message", "Email verified successfully. You can now log in."));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateProfile(
+            @RequestBody UpdateProfileRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(authFacade.updateProfile(userDetails.getUsername(), request));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@AuthenticationPrincipal UserDetails userDetails) {
         authFacade.logout(userDetails.getUsername());
         return ResponseEntity.ok(java.util.Map.of(
                 "success", true,
                 "message", "Logged out successfully"));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody java.util.Map<String, String> body) {
+        authFacade.forgotPassword(body.get("email"));
+        return ResponseEntity.ok(java.util.Map.of(
+                "success", true,
+                "message", "If that email is registered, a reset link has been sent."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody java.util.Map<String, String> body) {
+        authFacade.resetPassword(body.get("token"), body.get("newPassword"));
+        return ResponseEntity.ok(java.util.Map.of(
+                "success", true,
+                "message", "Password reset successfully. You can now log in."));
     }
 }

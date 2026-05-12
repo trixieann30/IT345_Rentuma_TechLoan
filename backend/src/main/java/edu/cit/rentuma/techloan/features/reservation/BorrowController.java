@@ -75,6 +75,11 @@ public class BorrowController {
                     .body(Map.of("error", "Custodians cannot submit reservation requests"));
         }
 
+        if (!hasVerifiedCitEmail(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "A verified CIT-U email is required to borrow equipment."));
+        }
+
         InventoryItem item = inventoryRepository.findById(request.getInventoryId()).orElse(null);
         if (item == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -266,5 +271,12 @@ public class BorrowController {
 
     private boolean isCustodian(UserDetails userDetails) {
         return resolveUser(userDetails).getRole() == User.Role.CUSTODIAN;
+    }
+
+    private boolean hasVerifiedCitEmail(User user) {
+        if (!user.isEmailVerified()) return false;
+        if (user.getEmail() != null && user.getEmail().toLowerCase().endsWith("@cit.edu")) return true;
+        if (user.getInstitutionalEmail() != null && user.getInstitutionalEmail().toLowerCase().endsWith("@cit.edu")) return true;
+        return false;
     }
 }

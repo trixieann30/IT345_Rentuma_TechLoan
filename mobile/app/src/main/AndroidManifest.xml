@@ -37,6 +37,7 @@
         <activity android:name=".features.custodian.AllLoansManagementActivity"     android:exported="false" />
         <activity android:name=".features.reservation.QRCodeViewActivity"           android:exported="false" />
         <activity android:name=".features.custodian.QRScanResultActivity"           android:exported="false" />
+        <activity android:name=".features.notification.NotificationActivity"          android:exported="false" />
 
     </application>
 </manifest>

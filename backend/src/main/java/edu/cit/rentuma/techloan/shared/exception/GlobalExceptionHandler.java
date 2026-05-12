@@ -1,5 +1,6 @@
 package edu.cit.rentuma.techloan.shared.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -53,6 +54,17 @@ public class GlobalExceptionHandler {
         String code = parts.length == 2 ? parts[0] : "AUTH-001";
         String msg  = parts.length == 2 ? parts[1] : "Invalid credentials";
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error(code, msg, null));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+        if (message != null && message.contains("users_email_key")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(error("DB-002", "An account with this email already exists", null));
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(error("DB-002", "Data integrity violation", null));
     }
 
     @ExceptionHandler(RuntimeException.class)

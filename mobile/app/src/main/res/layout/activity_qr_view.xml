@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -24,37 +24,57 @@
         android:gravity="center"
         android:padding="32dp">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminateTint="@color/primary"
-            android:visibility="visible"/>
+        <!-- QR card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginBottom="24dp">
 
-        <ImageView
-            android:id="@+id/ivQrCode"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
-            android:visibility="gone"
-            android:contentDescription="Reservation QR Code"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/primary"
+                    android:visibility="visible"/>
+
+                <ImageView
+                    android:id="@+id/ivQrCode"
+                    android:layout_width="260dp"
+                    android:layout_height="260dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:contentDescription="Reservation QR Code"
+                    android:padding="8dp"/>
+
+            </FrameLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/tvInstruction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="Show this QR code to the custodian when picking up your item."
             android:textAlignment="center"
             android:textColor="@color/gray_600"
             android:textSize="13sp"
+            android:fontFamily="sans-serif"
             android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tvError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/red_400"
+            android:textColor="@color/primary"
             android:textSize="13sp"
+            android:textAlignment="center"
             android:visibility="gone"/>
 
     </LinearLayout>

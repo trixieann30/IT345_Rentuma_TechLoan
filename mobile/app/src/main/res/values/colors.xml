@@ -2,9 +2,23 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary">#8B0000</color>
-    <color name="primary_light">#A52A2A</color>
-    <color name="primary_dark">#5C0000</color>
+
+    <!-- Brand palette -->
+    <color name="primary">#BE1B39</color>
+    <color name="primary_light">#E06060</color>
+    <color name="primary_dark">#8C1228</color>
+    <color name="gold">#F4C430</color>
+    <color name="gold_dark">#D4A420</color>
+    <color name="coral">#E06060</color>
+    <color name="sidebar">#120709</color>
+
+    <!-- Surface tints -->
+    <color name="primary_surface">#FDF2F4</color>
+    <color name="gold_surface">#FFFBEB</color>
+    <color name="green_surface">#ECFDF5</color>
+    <color name="background">#F7F5F6</color>
+
+    <!-- Gray scale -->
     <color name="gray_50">#F9FAFB</color>
     <color name="gray_100">#F3F4F6</color>
     <color name="gray_200">#E5E7EB</color>
@@ -14,14 +28,16 @@
     <color name="gray_600">#4B5563</color>
     <color name="gray_700">#374151</color>
     <color name="gray_900">#111827</color>
+
+    <!-- Semantic -->
     <color name="red_50">#FEF2F2</color>
     <color name="red_100">#FEE2E2</color>
     <color name="red_400">#F87171</color>
-    <color name="green_600">#16A34A</color>
+    <color name="green_600">#10B981</color>
+    <color name="green_dark">#059669</color>
     <color name="green_50">#F0FDF4</color>
     <color name="amber_50">#FFFBEB</color>
-    <color name="amber_600">#D97706</color>
+    <color name="amber_600">#F4C430</color>
     <color name="blue_50">#EFF6FF</color>
     <color name="blue_600">#2563EB</color>
-
 </resources>
