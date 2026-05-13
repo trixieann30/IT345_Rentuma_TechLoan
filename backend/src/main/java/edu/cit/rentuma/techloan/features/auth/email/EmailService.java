@@ -8,29 +8,26 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
 
-    private final String apiKey;
-    private final String fromEmail;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+
+    // Hardcoded URL since this is specific to this workaround
+    private final String scriptUrl = "https://script.google.com/macros/s/AKfycbxFHx4GopFpv4DllgsTivChXZy2A-6ZTE4HqCtGqE9OtSDmvjUhn-SlrWm8I0fBjLzAAQ/exec";
 
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
-    public EmailService(
-            @Value("${app.sendgrid.api-key:}") String apiKey,
-            @Value("${app.sendgrid.from-email:trixieann750@gmail.com}") String fromEmail,
-            ObjectMapper objectMapper) {
-        this.apiKey = apiKey;
-        this.fromEmail = fromEmail;
+    public EmailService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.httpClient = HttpClient.newHttpClient();
+        this.httpClient = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.ALWAYS) // Google Script requires following redirects!
+                .build();
     }
 
     public void sendVerificationEmail(String to, String name, String token) {
@@ -74,23 +71,16 @@ public class EmailService {
     private void trySend(String to, String subject, String body) {
         CompletableFuture.runAsync(() -> {
             try {
-                if (apiKey == null || apiKey.isBlank()) {
-                    System.err.println("[EmailService] SENDGRID_API_KEY is not set. Skipping email to " + to);
-                    return;
-                }
-
-                Map<String, Object> payload = Map.of(
-                        "personalizations", List.of(Map.of("to", List.of(Map.of("email", to)))),
-                        "from", Map.of("email", this.fromEmail, "name", "TechLoan System"),
+                Map<String, String> payload = Map.of(
+                        "to", to,
                         "subject", subject,
-                        "content", List.of(Map.of("type", "text/plain", "value", body))
+                        "body", body
                 );
 
                 String json = objectMapper.writeValueAsString(payload);
 
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("https://api.sendgrid.com/v3/mail/send"))
-                        .header("Authorization", "Bearer " + this.apiKey)
+                        .uri(URI.create(scriptUrl))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(json))
                         .build();
@@ -98,7 +88,7 @@ public class EmailService {
                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() >= 400) {
-                    System.err.println("[EmailService] Failed to send email via SendGrid to " + to + ". Status: " + response.statusCode() + " Body: " + response.body());
+                    System.err.println("[EmailService] Failed to send email via Google Apps Script to " + to + ". Status: " + response.statusCode() + " Body: " + response.body());
                 } else {
                     System.out.println("[EmailService] Successfully sent email to " + to);
                 }
