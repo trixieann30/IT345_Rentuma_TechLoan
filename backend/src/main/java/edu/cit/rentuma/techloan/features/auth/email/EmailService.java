@@ -1,30 +1,23 @@
 package edu.cit.rentuma.techloan.features.auth.email;
 
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 public class EmailService {
 
-    private final SendGrid sendGrid;
+    private final JavaMailSender mailSender;
     private final String fromEmail;
 
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
     public EmailService(
-            @Value("${app.sendgrid.api-key}") String apiKey,
-            @Value("${app.sendgrid.from-email}") String fromEmail) {
-        this.sendGrid = new SendGrid(apiKey);
+            JavaMailSender mailSender,
+            @Value("${spring.mail.username}") String fromEmail) {
+        this.mailSender = mailSender;
         this.fromEmail = fromEmail;
     }
 
@@ -67,24 +60,17 @@ public class EmailService {
     }
 
     private void trySend(String to, String subject, String body) {
-        Email from = new Email(this.fromEmail, "TechLoan System");
-        Email toEmail = new Email(to);
-        Content content = new Content("text/plain", body);
-        Mail mail = new Mail(from, subject, toEmail, content);
-
-        Request request = new Request();
         try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            Response response = sendGrid.api(request);
-            if (response.getStatusCode() >= 400) {
-                System.err.println("[EmailService] Failed to send email via SendGrid to " + to + ". Status: " + response.getStatusCode() + " Body: " + response.getBody());
-            } else {
-                System.out.println("[EmailService] Successfully sent email to " + to);
-            }
-        } catch (IOException ex) {
-            System.err.println("[EmailService] IO Exception when sending email to " + to + ": " + ex.getMessage());
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(this.fromEmail);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+            System.out.println("[EmailService] Successfully sent email to " + to);
+        } catch (Exception ex) {
+            System.err.println("[EmailService] Exception when sending email to " + to + ": " + ex.getMessage());
         }
     }
 
