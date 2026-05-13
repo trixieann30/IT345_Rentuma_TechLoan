@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
@@ -60,18 +61,20 @@ public class EmailService {
     }
 
     private void trySend(String to, String subject, String body) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(this.fromEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
+        CompletableFuture.runAsync(() -> {
+            try {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom(this.fromEmail);
+                message.setTo(to);
+                message.setSubject(subject);
+                message.setText(body);
 
-            mailSender.send(message);
-            System.out.println("[EmailService] Successfully sent email to " + to);
-        } catch (Exception ex) {
-            System.err.println("[EmailService] Exception when sending email to " + to + ": " + ex.getMessage());
-        }
+                mailSender.send(message);
+                System.out.println("[EmailService] Successfully sent email to " + to);
+            } catch (Exception ex) {
+                System.err.println("[EmailService] Exception when sending email to " + to + ": " + ex.getMessage());
+            }
+        });
     }
 
     private String capitalize(String s) {
