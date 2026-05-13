@@ -99,13 +99,7 @@
       <version>1.3.35</version>
     </dependency>
 
-    <!-- Spring Mail -->
 
-    <!-- Spring Mail -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-mail</artifactId>
-    </dependency>
 
     <!-- ZXing QR Code -->
     <dependency>
