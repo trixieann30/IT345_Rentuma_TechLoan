@@ -25,9 +25,21 @@ public class AuthEmailListener implements AuthEventListener {
 
     @Override
     public void onAuthEvent(AuthEvent event) {
-        if (event.getType() == AuthEvent.Type.REGISTER_SUCCESS
-                || event.getType() == AuthEvent.Type.GOOGLE_AUTH_SUCCESS) {
-            User user = event.getUser();
+        User user = event.getUser();
+
+        if (event.getType() == AuthEvent.Type.GOOGLE_AUTH_SUCCESS) {
+            // Google already verified the Gmail address — only send verification
+            // to the CIT-U institutional email. If it's missing or already verified, skip.
+            if (!user.isEmailVerified()
+                    && user.getVerificationToken() != null
+                    && user.getInstitutionalEmail() != null) {
+                emailService.sendVerificationEmail(
+                        user.getInstitutionalEmail(), user.getFullName(), user.getVerificationToken());
+            }
+            return;
+        }
+
+        if (event.getType() == AuthEvent.Type.REGISTER_SUCCESS) {
             if (user.getRole() == User.Role.CUSTODIAN) {
                 emailService.sendWelcome(user.getEmail(), user.getFullName());
             } else if (user.getVerificationToken() != null) {
@@ -37,7 +49,7 @@ public class AuthEmailListener implements AuthEventListener {
                             ? user.getPersonalEmail()
                             : user.getEmail();
                 emailService.sendVerificationEmail(
-                    targetEmail, user.getFullName(), user.getVerificationToken());
+                        targetEmail, user.getFullName(), user.getVerificationToken());
             }
         }
     }
