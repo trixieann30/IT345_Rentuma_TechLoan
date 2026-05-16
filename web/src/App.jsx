@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import Layout           from './shared/components/Layout'
+import SplashScreen     from './shared/components/SplashScreen'
 import LoginPage        from './features/auth/LoginPage'
 import RegisterPage     from './features/auth/RegisterPage'
 import VerifyEmailPage     from './features/auth/VerifyEmailPage'
@@ -22,7 +24,11 @@ function ProtectedLayout() {
 }
 
 export default function App() {
+  const [splashDone, setSplashDone] = useState(false)
+
   return (
+    <>
+      {!splashDone && <SplashScreen onDone={() => setSplashDone(true)} />}
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Routes>
         <Route path="/"        element={<Navigate to="/login" replace />} />
@@ -44,5 +50,6 @@ export default function App() {
         </Route>
       </Routes>
     </GoogleOAuthProvider>
+    </>
   )
 }
