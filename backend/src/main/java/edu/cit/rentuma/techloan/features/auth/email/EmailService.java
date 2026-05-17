@@ -5,22 +5,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
 
-    @Value("${mailjet.api-key:}")
-    private String apiKey;
+    @Value("${gmail.client-id:}")
+    private String clientId;
 
-    @Value("${mailjet.secret-key:}")
-    private String secretKey;
+    @Value("${gmail.client-secret:}")
+    private String clientSecret;
+
+    @Value("${gmail.refresh-token:}")
+    private String refreshToken;
 
     @Value("${app.email.sender:techloan.citu@gmail.com}")
     private String senderEmail;
@@ -70,27 +73,19 @@ public class EmailService {
     }
 
     private void trySend(String to, String subject, String body) {
-        if (apiKey == null || apiKey.isBlank()) {
-            System.out.println("[EmailService] MAILJET_API_KEY not set — skipping email to " + to);
+        if (refreshToken == null || refreshToken.isBlank()) {
+            System.out.println("[EmailService] GMAIL_REFRESH_TOKEN not set — skipping email to " + to);
             return;
         }
         CompletableFuture.runAsync(() -> {
             try {
-                Map<String, Object> payload = Map.of(
-                        "Messages", List.of(Map.of(
-                                "From", Map.of("Email", senderEmail, "Name", "TechLoan"),
-                                "To", List.of(Map.of("Email", to)),
-                                "Subject", subject,
-                                "TextPart", body
-                        ))
-                );
-                String json = objectMapper.writeValueAsString(payload);
-                String credentials = Base64.getEncoder()
-                        .encodeToString((apiKey + ":" + secretKey).getBytes());
+                String accessToken = getAccessToken();
+                String rawMessage = buildRawMessage(to, subject, body);
+                String json = "{\"raw\":\"" + rawMessage + "\"}";
 
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("https://api.mailjet.com/v3.1/send"))
-                        .header("Authorization", "Basic " + credentials)
+                        .uri(URI.create("https://gmail.googleapis.com/gmail/v1/users/me/messages/send"))
+                        .header("Authorization", "Bearer " + accessToken)
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(json))
                         .build();
@@ -108,6 +103,36 @@ public class EmailService {
                 System.out.println("[EmailService] Failed to send email to " + to + ": " + e.getMessage());
             }
         });
+    }
+
+    private String getAccessToken() throws Exception {
+        String form = "grant_type=refresh_token"
+                + "&refresh_token=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
+                + "&client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8)
+                + "&client_secret=" + URLEncoder.encode(clientSecret, StandardCharsets.UTF_8);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://oauth2.googleapis.com/token"))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(form))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        return objectMapper.readTree(response.body()).get("access_token").asText();
+    }
+
+    private String buildRawMessage(String to, String subject, String body) {
+        String message = "From: TechLoan <" + senderEmail + ">\r\n"
+                + "To: " + to + "\r\n"
+                + "Subject: " + subject + "\r\n"
+                + "MIME-Version: 1.0\r\n"
+                + "Content-Type: text/plain; charset=UTF-8\r\n"
+                + "\r\n"
+                + body;
+        return Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(message.getBytes(StandardCharsets.UTF_8));
     }
 
     private String capitalize(String s) {
