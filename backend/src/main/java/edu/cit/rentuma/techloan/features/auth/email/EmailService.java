@@ -120,7 +120,12 @@ public class EmailService {
         HttpResponse<String> response = httpClient.send(request,
                 HttpResponse.BodyHandlers.ofString());
 
-        return objectMapper.readTree(response.body()).get("access_token").asText();
+        System.out.println("[EmailService] Token response: " + response.body());
+        com.fasterxml.jackson.databind.JsonNode node = objectMapper.readTree(response.body());
+        if (node.get("access_token") == null) {
+            throw new RuntimeException("No access_token in response: " + response.body());
+        }
+        return node.get("access_token").asText();
     }
 
     private String buildRawMessage(String to, String subject, String body) {
