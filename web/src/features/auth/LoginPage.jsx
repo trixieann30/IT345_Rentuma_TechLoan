@@ -103,8 +103,8 @@ export default function LoginPage() {
         {/* Brand */}
         <div className="relative">
           <div className="flex items-center gap-3 mb-16">
-            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(244,196,48,0.15)', border: '1px solid rgba(244,196,48,0.3)' }}>
-              <span className="font-black text-xl" style={{ color: '#F4C430' }}>T</span>
+            <div className="w-11 h-11 rounded-xl overflow-hidden bg-white flex-shrink-0">
+              <img src="/techloan_logo.png" alt="TechLoan" className="w-full h-full object-contain" />
             </div>
             <div>
               <p className="text-white font-bold text-xl leading-tight">TechLoan</p>
@@ -154,9 +154,7 @@ export default function LoginPage() {
 
           {/* Mobile brand mark */}
           <div className="flex lg:hidden items-center gap-2.5 mb-8">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#BE1B39' }}>
-              <span className="font-black text-white text-base">T</span>
-            </div>
+            <img src="/techloan_logo.png" alt="TechLoan" className="w-9 h-9 rounded-xl object-contain" />
             <p className="font-bold text-gray-900 text-lg">TechLoan</p>
           </div>
 

@@ -27,11 +27,8 @@ export default function SplashScreen({ onDone }) {
 
       {/* Logo */}
       <div className="relative flex flex-col items-center gap-4 animate-[fadeIn_0.6s_ease_forwards]">
-        <div
-          className="w-24 h-24 rounded-3xl flex items-center justify-center shadow-2xl"
-          style={{ background: 'rgba(255,255,255,0.10)', border: '1.5px solid rgba(244,196,48,0.35)' }}
-        >
-          <span className="font-black text-5xl" style={{ color: '#F4C430' }}>T</span>
+        <div className="w-28 h-28 rounded-3xl overflow-hidden shadow-2xl bg-white flex items-center justify-center">
+          <img src="/techloan_logo.png" alt="TechLoan" className="w-full h-full object-contain p-1" />
         </div>
 
         <div className="text-center">

@@ -95,9 +95,8 @@ export default function Layout() {
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 h-16 flex-shrink-0 relative"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
-            style={{ background: 'linear-gradient(135deg, #BE1B39, #8C1229)' }}>
-            <span className="text-white font-black text-base select-none">T</span>
+          <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 shadow-lg bg-white">
+            <img src="/techloan_logo.png" alt="TechLoan" className="w-full h-full object-contain" />
           </div>
           <div>
             <p className="text-white font-bold text-[15px] leading-tight">TechLoan</p>
