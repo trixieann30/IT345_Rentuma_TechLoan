@@ -39,7 +39,11 @@ public class LoanService {
         request.setStatus(newStatus);
         BorrowRequest saved = repository.save(request);
 
-        eventPublisher.publishStatusChange(id, newStatus, saved.getUserEmail());
+        try {
+            eventPublisher.publishStatusChange(id, newStatus, saved.getUserEmail());
+        } catch (Exception e) {
+            // Notification/email side-effects must not roll back the status update
+        }
         return saved;
     }
 

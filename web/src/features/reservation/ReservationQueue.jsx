@@ -3,6 +3,15 @@ import { reservationService } from './api'
 
 const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'RELEASED', 'REJECTED', 'RETURNED', 'OVERDUE']
 
+function apiError(e, fallback) {
+  const d = e?.response?.data
+  if (!d) return fallback
+  if (typeof d.error?.message === 'string') return d.error.message.trim()
+  if (typeof d.error === 'string') return d.error
+  if (typeof d.message === 'string') return d.message
+  return fallback
+}
+
 const BADGE = {
   PENDING:  'badge-pending',
   APPROVED: 'badge-approved',
@@ -43,7 +52,7 @@ export default function ReservationQueue() {
       await reservationService.approveReservation(id)
       await fetchReservations()
     } catch (e) {
-      setError(e?.response?.data?.error || 'Failed to approve.')
+      setError(apiError(e, 'Failed to approve.'))
     } finally {
       setActionLoading(p => ({ ...p, [id]: null }))
     }
@@ -58,7 +67,7 @@ export default function ReservationQueue() {
       setRejectReason('')
       await fetchReservations()
     } catch (e) {
-      setError(e?.response?.data?.error || 'Failed to reject.')
+      setError(apiError(e, 'Failed to reject.'))
     } finally {
       setRejecting(false)
     }
@@ -70,7 +79,7 @@ export default function ReservationQueue() {
       await reservationService.releaseReservation(id)
       setStatusFilter('RELEASED')
     } catch (e) {
-      setError(e?.response?.data?.error || 'Failed to release item.')
+      setError(apiError(e, 'Failed to release item.'))
     } finally {
       setActionLoading(p => ({ ...p, [id]: null }))
     }
@@ -82,7 +91,7 @@ export default function ReservationQueue() {
       await reservationService.returnReservation(id)
       await fetchReservations()
     } catch (e) {
-      setError(e?.response?.data?.error || 'Failed to mark as returned.')
+      setError(apiError(e, 'Failed to mark as returned.'))
     } finally {
       setActionLoading(p => ({ ...p, [id]: null }))
     }
