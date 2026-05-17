@@ -167,13 +167,16 @@ public class AuthService {
 
     @Transactional
     public void forgotPassword(String email) {
-        userRepository.findByEmail(email.toLowerCase()).ifPresent(user -> {
-            String token = UUID.randomUUID().toString();
-            user.setPasswordResetToken(token);
-            user.setPasswordResetExpiry(LocalDateTime.now().plusHours(1));
-            userRepository.save(user);
-            emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), token);
-        });
+        String normalized = email.toLowerCase();
+        User user = userRepository.findByEmail(normalized)
+                .or(() -> userRepository.findByInstitutionalEmail(normalized))
+                .orElse(null);
+        if (user == null) return;
+        String token = UUID.randomUUID().toString();
+        user.setPasswordResetToken(token);
+        user.setPasswordResetExpiry(LocalDateTime.now().plusHours(1));
+        userRepository.save(user);
+        emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), token);
     }
 
     @Transactional

@@ -37,7 +37,7 @@ public class ReservationEmailListener {
         borrowRequestRepository.findById(event.getBorrowRequestId()).ifPresent(request ->
             userRepository.findByEmail(event.getUserEmail()).ifPresent(user ->
                 emailService.sendStatusUpdate(
-                    user.getEmail(),
+                    user.getInstitutionalEmail() != null ? user.getInstitutionalEmail() : user.getEmail(),
                     user.getFullName(),
                     status.name(),
                     request.getItemName()
