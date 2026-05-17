@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   function validate() {
     const errs = {}
     if (!form.newPassword) errs.newPassword = 'Password is required'
-    else if (form.newPassword.length < 6) errs.newPassword = 'Password must be at least 6 characters'
+    else if (form.newPassword.length < 8) errs.newPassword = 'Password must be at least 8 characters'
     if (!form.confirm) errs.confirm = 'Please confirm your password'
     else if (form.confirm !== form.newPassword) errs.confirm = 'Passwords do not match'
     return errs
@@ -34,9 +34,13 @@ export default function ResetPasswordPage() {
       setSuccess(true)
     } catch (err) {
       const msg = err.response?.data?.error?.message || err.response?.data?.message || ''
-      setApiError(msg.includes('VALID-005')
-        ? 'This reset link has expired or is invalid. Please request a new one.'
-        : 'Something went wrong. Please try again.')
+      if (msg.includes('VALID-005')) {
+        setApiError('This reset link has expired or is invalid. Please request a new one.')
+      } else if (msg.includes('VALID-001')) {
+        setApiError('Password must be at least 8 characters.')
+      } else {
+        setApiError(msg || 'Something went wrong. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
@@ -99,7 +103,7 @@ export default function ResetPasswordPage() {
                 <div className="relative">
                   <input
                     type="password"
-                    placeholder="At least 6 characters"
+                    placeholder="At least 8 characters"
                     value={form.newPassword}
                     onChange={e => { setForm({ ...form, newPassword: e.target.value }); setErrors({ ...errors, newPassword: '' }) }}
                     className={`input-field pl-10 ${errors.newPassword ? 'input-error' : ''}`}
