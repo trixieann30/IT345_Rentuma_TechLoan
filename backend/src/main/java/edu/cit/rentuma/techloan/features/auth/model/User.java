@@ -67,6 +67,7 @@ public class User {
         this.studentId         = b.studentId;
         this.googleId          = b.googleId;
         this.personalEmail     = b.personalEmail;
+        this.institutionalEmail = b.institutionalEmail;
         this.role              = b.role;
         this.penaltyPoints     = b.penaltyPoints != null ? b.penaltyPoints : 0;
         this.emailVerified     = b.emailVerified;
