@@ -1,37 +1,29 @@
 package edu.cit.rentuma.techloan.features.auth.email;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
 
-    private static final String RESEND_URL = "https://api.resend.com/emails";
+    private final JavaMailSender mailSender;
 
-    @Value("${app.email.resend.api-key:}")
-    private String apiKey;
-
-    @Value("${app.email.resend.sender:TechLoan CIT-U <onboarding@resend.dev>}")
-    private String sender;
+    @Value("${app.email.sender:noreply@techloan.app}")
+    private String senderEmail;
 
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
-    private final HttpClient httpClient;
-
-    public EmailService() {
-        this.httpClient = HttpClient.newHttpClient();
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     public void sendVerificationEmail(String to, String name, String token) {
-        trySend(to, name,
+        trySend(to,
                 "TechLoan — Verify Your Email",
                 "Hi " + name + ",\n\n" +
                 "Please verify your TechLoan account by clicking the link below:\n\n" +
@@ -41,7 +33,7 @@ public class EmailService {
     }
 
     public void sendWelcome(String to, String name) {
-        trySend(to, name,
+        trySend(to,
                 "Welcome to TechLoan!",
                 "Hi " + name + ",\n\n" +
                 "Your TechLoan account has been created successfully.\n" +
@@ -50,7 +42,7 @@ public class EmailService {
     }
 
     public void sendPasswordResetEmail(String to, String name, String token) {
-        trySend(to, name,
+        trySend(to,
                 "TechLoan — Reset Your Password",
                 "Hi " + name + ",\n\n" +
                 "You requested to reset your TechLoan password. Click the link below:\n\n" +
@@ -60,7 +52,7 @@ public class EmailService {
     }
 
     public void sendStatusUpdate(String to, String name, String status, String itemName) {
-        trySend(to, name,
+        trySend(to,
                 "TechLoan — Reservation " + capitalize(status),
                 "Hi " + name + ",\n\n" +
                 "Your reservation for \"" + itemName + "\" has been " + status.toLowerCase() + ".\n\n" +
@@ -68,46 +60,20 @@ public class EmailService {
                 "TechLoan — CIT-U Lab Equipment System");
     }
 
-    private void trySend(String to, String toName, String subject, String body) {
-        if (apiKey.isBlank()) {
-            System.err.println("[EmailService] RESEND_API_KEY not set. Skipping email to: " + to);
-            return;
-        }
+    private void trySend(String to, String subject, String body) {
         CompletableFuture.runAsync(() -> {
             try {
-                String payload = "{"
-                        + "\"from\":" + q(sender) + ","
-                        + "\"to\":[" + q(to) + "],"
-                        + "\"subject\":" + q(subject) + ","
-                        + "\"text\":" + q(body)
-                        + "}";
-
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(RESEND_URL))
-                        .header("Authorization", "Bearer " + apiKey)
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
-                        .build();
-
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-                if (response.statusCode() == 200 || response.statusCode() == 201) {
-                    System.out.println("[EmailService] Sent email to " + to);
-                } else {
-                    System.err.println("[EmailService] Resend returned " + response.statusCode() + ": " + response.body());
-                }
+                SimpleMailMessage msg = new SimpleMailMessage();
+                msg.setFrom(senderEmail);
+                msg.setTo(to);
+                msg.setSubject(subject);
+                msg.setText(body);
+                mailSender.send(msg);
+                System.out.println("[EmailService] Sent email to " + to);
             } catch (Exception e) {
                 System.err.println("[EmailService] Failed to send email to " + to + ": " + e.getMessage());
             }
         });
-    }
-
-    private String q(String s) {
-        if (s == null) return "\"\"";
-        return "\"" + s.replace("\\", "\\\\")
-                       .replace("\"", "\\\"")
-                       .replace("\n", "\\n")
-                       .replace("\r", "") + "\"";
     }
 
     private String capitalize(String s) {
