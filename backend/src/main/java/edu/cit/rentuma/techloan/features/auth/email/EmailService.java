@@ -1,26 +1,35 @@
 package edu.cit.rentuma.techloan.features.auth.email;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    @Value("${mailjet.api-key:}")
+    private String apiKey;
 
-    @Value("${app.email.sender:noreply@techloan.app}")
+    @Value("${mailjet.secret-key:}")
+    private String secretKey;
+
+    @Value("${app.email.sender:techloan.citu@gmail.com}")
     private String senderEmail;
 
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public void sendVerificationEmail(String to, String name, String token) {
         trySend(to,
@@ -61,15 +70,40 @@ public class EmailService {
     }
 
     private void trySend(String to, String subject, String body) {
+        if (apiKey == null || apiKey.isBlank()) {
+            System.out.println("[EmailService] MAILJET_API_KEY not set — skipping email to " + to);
+            return;
+        }
         CompletableFuture.runAsync(() -> {
             try {
-                SimpleMailMessage msg = new SimpleMailMessage();
-                msg.setFrom(senderEmail);
-                msg.setTo(to);
-                msg.setSubject(subject);
-                msg.setText(body);
-                mailSender.send(msg);
-                System.out.println("[EmailService] Sent email to " + to);
+                Map<String, Object> payload = Map.of(
+                        "Messages", List.of(Map.of(
+                                "From", Map.of("Email", senderEmail, "Name", "TechLoan"),
+                                "To", List.of(Map.of("Email", to)),
+                                "Subject", subject,
+                                "TextPart", body
+                        ))
+                );
+                String json = objectMapper.writeValueAsString(payload);
+                String credentials = Base64.getEncoder()
+                        .encodeToString((apiKey + ":" + secretKey).getBytes());
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("https://api.mailjet.com/v3.1/send"))
+                        .header("Authorization", "Basic " + credentials)
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+
+                HttpResponse<String> response = httpClient.send(request,
+                        HttpResponse.BodyHandlers.ofString());
+
+                if (response.statusCode() == 200) {
+                    System.out.println("[EmailService] Sent email to " + to);
+                } else {
+                    System.out.println("[EmailService] Failed to send email to " + to
+                            + ": HTTP " + response.statusCode() + " — " + response.body());
+                }
             } catch (Exception e) {
                 System.out.println("[EmailService] Failed to send email to " + to + ": " + e.getMessage());
             }
