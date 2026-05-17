@@ -68,7 +68,7 @@ export default function ReservationQueue() {
     setActionLoading(p => ({ ...p, [id]: 'releasing' }))
     try {
       await reservationService.releaseReservation(id)
-      await fetchReservations()
+      setStatusFilter('RELEASED')
     } catch (e) {
       setError(e?.response?.data?.error || 'Failed to release item.')
     } finally {
