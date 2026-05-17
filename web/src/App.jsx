@@ -15,7 +15,8 @@ import MyReservations   from './features/reservation/MyReservations'
 import ReservationQueue from './features/reservation/ReservationQueue'
 import OverdueTracker   from './features/reservation/OverdueTracker'
 import QRScanPage       from './features/reservation/QRScanPage'
-import PaymentSuccessPage from './features/payment/PaymentSuccessPage'
+import PaymentSuccessPage   from './features/payment/PaymentSuccessPage'
+import PenaltyManagement   from './features/penalty/PenaltyManagement'
 
 function ProtectedLayout() {
   const token = localStorage.getItem('token')
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/my-reservations"   element={<MyReservations />} />
           <Route path="/reservation-queue" element={<ReservationQueue />} />
           <Route path="/overdue-tracker"   element={<OverdueTracker />} />
+          <Route path="/penalty-management" element={<PenaltyManagement />} />
           <Route path="/qr-scan"           element={<QRScanPage />} />
           <Route path="/payment/success"   element={<PaymentSuccessPage />} />
         </Route>

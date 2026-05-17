@@ -2,6 +2,7 @@ package edu.cit.rentuma.techloan.features.penalty;
 
 import edu.cit.rentuma.techloan.features.auth.model.User;
 import edu.cit.rentuma.techloan.features.auth.repository.UserRepository;
+import edu.cit.rentuma.techloan.features.penalty.dto.AdminPenaltyDTO;
 import edu.cit.rentuma.techloan.features.penalty.dto.PenaltyDTO;
 import edu.cit.rentuma.techloan.features.penalty.dto.PenaltySummaryDTO;
 import edu.cit.rentuma.techloan.features.penalty.model.Penalty;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class PenaltyController {
 
     private final UserRepository userRepository;
@@ -32,7 +33,33 @@ public class PenaltyController {
         this.dtoFactory        = dtoFactory;
     }
 
-    @GetMapping("/{id}/penalties")
+    @GetMapping("/penalties")
+    public ResponseEntity<?> getAllPenalties(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        User caller = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (caller.getRole() != User.Role.CUSTODIAN) {
+            return ResponseEntity.status(403).body(Map.of("error", "Access denied"));
+        }
+
+        List<AdminPenaltyDTO> result = penaltyRepository.findAll().stream()
+                .map(p -> {
+                    String name  = userRepository.findById(p.getUserId())
+                            .map(User::getFullName).orElse("Unknown");
+                    String email = userRepository.findById(p.getUserId())
+                            .map(User::getEmail).orElse("");
+                    return new AdminPenaltyDTO(p.getId(), p.getUserId(), name, email,
+                            p.getItemName(), p.getDaysOverdue(), p.getPenaltyPoints(),
+                            p.getPaid(), p.getCalculatedAt());
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/users/{id}/penalties")
     public ResponseEntity<?> getUserPenalties(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {

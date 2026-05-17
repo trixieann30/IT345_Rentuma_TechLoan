@@ -11,12 +11,13 @@ const STUDENT_NAV = [
 ]
 
 const CUSTODIAN_NAV = [
-  { to: '/dashboard',         label: 'Dashboard',        Icon: IcHome },
-  { to: '/inventory',         label: 'Manage Inventory', Icon: IcPackage },
-  { to: '/reservation-queue', label: 'Reservations',     Icon: IcClipboard },
-  { to: '/overdue-tracker',   label: 'Overdue Tracker',  Icon: IcClock },
-  { to: '/qr-scan',           label: 'QR Scanner',       Icon: IcQr },
-  { to: '/profile',           label: 'Profile',          Icon: IcUser },
+  { to: '/dashboard',           label: 'Dashboard',          Icon: IcHome },
+  { to: '/inventory',           label: 'Manage Inventory',   Icon: IcPackage },
+  { to: '/reservation-queue',   label: 'Reservations',       Icon: IcClipboard },
+  { to: '/overdue-tracker',     label: 'Overdue Tracker',    Icon: IcClock },
+  { to: '/penalty-management',  label: 'Penalties',          Icon: IcAlert },
+  { to: '/qr-scan',             label: 'QR Scanner',         Icon: IcQr },
+  { to: '/profile',             label: 'Profile',            Icon: IcUser },
 ]
 
 export default function Layout() {
