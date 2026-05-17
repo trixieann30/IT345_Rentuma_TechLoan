@@ -88,7 +88,9 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
+        String normalized = request.getEmail().toLowerCase();
+        User user = userRepository.findByEmail(normalized)
+                .or(() -> userRepository.findByInstitutionalEmail(normalized))
                 .orElseThrow(() ->
                         new BadCredentialsException("AUTH-001:Invalid email or password"));
 
@@ -176,7 +178,10 @@ public class AuthService {
         user.setPasswordResetToken(token);
         user.setPasswordResetExpiry(LocalDateTime.now().plusHours(1));
         userRepository.save(user);
-        emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), token);
+        String resetTarget = user.getInstitutionalEmail() != null
+                ? user.getInstitutionalEmail()
+                : user.getEmail();
+        emailService.sendPasswordResetEmail(resetTarget, user.getFullName(), token);
     }
 
     @Transactional
@@ -185,8 +190,8 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("VALID-005:Invalid or expired reset link."));
         if (user.getPasswordResetExpiry() == null || user.getPasswordResetExpiry().isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("VALID-005:Invalid or expired reset link.");
-        if (newPassword == null || newPassword.length() < 6)
-            throw new IllegalArgumentException("VALID-001:Password must be at least 6 characters.");
+        if (newPassword == null || newPassword.length() < 8)
+            throw new IllegalArgumentException("VALID-001:Password must be at least 8 characters.");
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         user.setPasswordResetToken(null);
         user.setPasswordResetExpiry(null);

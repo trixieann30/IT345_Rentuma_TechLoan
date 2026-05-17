@@ -29,7 +29,6 @@ public class ReservationEmailListener {
         if (status != BorrowStatus.APPROVED
                 && status != BorrowStatus.REJECTED
                 && status != BorrowStatus.OVERDUE
-                && status != BorrowStatus.PENDING
                 && status != BorrowStatus.RETURNED) {
             return;
         }
