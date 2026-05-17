@@ -76,13 +76,9 @@ public class PaymentService {
             throw new IllegalStateException("Payment is already confirmed");
         }
 
-        if (payment.getGatewaySessionId() != null) {
-            boolean paid = payMongoService.verifyPayment(payment.getGatewaySessionId());
-            if (!paid) {
-                throw new IllegalStateException("PayMongo payment has not been completed yet");
-            }
-        }
-
+        // PayMongo only redirects to success_url after a successful payment —
+        // the redirect itself is the confirmation. Calling verifyPayment() here
+        // races against PayMongo's async status update and will often fail.
         payment.setStatus(Payment.PaymentStatus.PAID);
         payment.setPaidAt(LocalDateTime.now());
         paymentRepository.save(payment);
