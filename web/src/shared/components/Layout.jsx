@@ -196,7 +196,11 @@ export default function Layout() {
           {/* Notification bell */}
           <div className="relative" ref={notifRef}>
             <button
-              onClick={() => setShowNotif(v => !v)}
+              onClick={() => {
+                const opening = !showNotif
+                setShowNotif(v => !v)
+                if (opening && unreadCount > 0) handleMarkAllRead()
+              }}
               className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150"
               style={{
                 background: (showNotif || unreadCount > 0) ? '#FDF2F4' : '#F9FAFB',
