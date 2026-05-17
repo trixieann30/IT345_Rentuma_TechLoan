@@ -129,9 +129,12 @@ public class EmailService {
     }
 
     private String buildRawMessage(String to, String subject, String body) {
+        String encodedSubject = "=?UTF-8?B?"
+                + Base64.getEncoder().encodeToString(subject.getBytes(StandardCharsets.UTF_8))
+                + "?=";
         String message = "From: TechLoan <" + senderEmail + ">\r\n"
                 + "To: " + to + "\r\n"
-                + "Subject: " + subject + "\r\n"
+                + "Subject: " + encodedSubject + "\r\n"
                 + "MIME-Version: 1.0\r\n"
                 + "Content-Type: text/plain; charset=UTF-8\r\n"
                 + "\r\n"
