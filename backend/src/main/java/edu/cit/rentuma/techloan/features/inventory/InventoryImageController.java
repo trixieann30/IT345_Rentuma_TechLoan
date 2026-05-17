@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +22,7 @@ import java.util.UUID;
 public class InventoryImageController {
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
-    private static final String UPLOAD_DIR = "uploads/equipment/";
+    private static final String BUCKET = "equipment";
 
     @Value("${serper.api-key:}")
     private String serperApiKey;
@@ -36,13 +30,16 @@ public class InventoryImageController {
     private final InventoryRepository inventoryRepository;
     private final UserRepository userRepository;
     private final RestClient restClient;
+    private final SupabaseStorageService storageService;
 
     public InventoryImageController(InventoryRepository inventoryRepository,
                                     UserRepository userRepository,
-                                    RestClient.Builder builder) {
+                                    RestClient.Builder builder,
+                                    SupabaseStorageService storageService) {
         this.inventoryRepository = inventoryRepository;
         this.userRepository = userRepository;
         this.restClient = builder.build();
+        this.storageService = storageService;
     }
 
     @GetMapping("/{id}/auto-image")
@@ -131,30 +128,23 @@ public class InventoryImageController {
                     .body(Map.of("error", "Only jpg, jpeg, and png files are allowed"));
         }
 
-        // Mark as user-provided immediately so Serper is permanently blocked for this item
+        // Mark as user-provided so Serper is permanently skipped for this item
         item.setUserProvidedImage(true);
         inventoryRepository.save(item);
 
         try {
-            Path uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath();
-            Files.createDirectories(uploadPath);
-
             String filename = "item-" + id + "-" + UUID.randomUUID().toString().substring(0, 8) + "." + ext;
-            Path filePath = uploadPath.resolve(filename);
+            String contentType = ext.equals("png") ? "image/png" : "image/jpeg";
+            String imageUrl = storageService.uploadImage(BUCKET, filename, file.getBytes(), contentType);
 
-            try (InputStream in = file.getInputStream()) {
-                Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
-            }
-
-            String imageUrl = "/uploads/equipment/" + filename;
             item.setImageUrl(imageUrl);
             inventoryRepository.save(item);
 
             return ResponseEntity.ok(Map.of("itemId", id, "imageUrl", imageUrl));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to save image: " + e.getMessage()));
+                    .body(Map.of("error", "Failed to upload image: " + e.getMessage()));
         }
     }
 
