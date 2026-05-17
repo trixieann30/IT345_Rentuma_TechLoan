@@ -3,7 +3,7 @@ import { inventoryService } from './api'
 
 const CATEGORIES = ['Laptop', 'Tablet', 'Camera', 'Drone', 'Monitor', 'Keyboard',
   'Mouse', 'Projector', 'Microphone', 'Headphones', 'Speaker', 'Storage',
-  'Arduino', 'Sensors', 'Network Tools', 'Other']
+  'Arduino', 'Sensors', 'Network Tools', 'Others']
 const CONDITIONS = ['Excellent', 'Good', 'Fair', 'Poor']
 
 const emptyForm = {
