@@ -71,7 +71,7 @@ public class EmailService {
                 mailSender.send(msg);
                 System.out.println("[EmailService] Sent email to " + to);
             } catch (Exception e) {
-                System.err.println("[EmailService] Failed to send email to " + to + ": " + e.getMessage());
+                System.out.println("[EmailService] Failed to send email to " + to + ": " + e.getMessage());
             }
         });
     }
