@@ -6,6 +6,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import edu.cit.rentuma.techloan.features.auth.dto.*;
+import edu.cit.rentuma.techloan.features.auth.email.EmailService;
 import edu.cit.rentuma.techloan.features.auth.model.User;
 import edu.cit.rentuma.techloan.features.auth.observer.AuthEventPublisher;
 import edu.cit.rentuma.techloan.features.auth.repository.UserRepository;
@@ -25,16 +26,19 @@ public class GoogleAuthService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final AuthEventPublisher eventPublisher;
+    private final EmailService emailService;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
     public GoogleAuthService(UserRepository userRepository,
                              JwtUtil jwtUtil,
-                             AuthEventPublisher eventPublisher) {
+                             AuthEventPublisher eventPublisher,
+                             EmailService emailService) {
         this.userRepository  = userRepository;
         this.jwtUtil         = jwtUtil;
         this.eventPublisher  = eventPublisher;
+        this.emailService    = emailService;
     }
 
     public GoogleIdToken.Payload verifyIdToken(String idTokenString)
@@ -110,6 +114,13 @@ public class GoogleAuthService {
             eventPublisher.publishGoogleAuthSuccess(savedUser);
 
             if (!savedUser.isEmailVerified()) {
+                if (savedUser.getInstitutionalEmail() != null && savedUser.getVerificationToken() != null) {
+                    System.out.println("[GoogleAuthService] Sending verification email to: " + savedUser.getInstitutionalEmail());
+                    emailService.sendVerificationEmail(
+                            savedUser.getInstitutionalEmail(),
+                            savedUser.getFullName(),
+                            savedUser.getVerificationToken());
+                }
                 return AuthResponse.builder()
                         .success(true)
                         .user(UserResponse.from(savedUser))
