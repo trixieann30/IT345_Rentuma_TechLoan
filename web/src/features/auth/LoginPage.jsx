@@ -124,10 +124,9 @@ export default function LoginPage() {
         {/* Feature bullets */}
         <div className="relative space-y-4">
           {[
-            ['QR Code Slips',      'Instant digital borrowing slips with scannable QR codes'],
-            ['Real-time Updates',  'Notifications for every reservation status change'],
-            ['Online Payments',    'Pay penalty fines via GCash or Maya instantly'],
-            ['Holiday Awareness',  'Automatically shows upcoming lab closure dates'],
+            ['QR Code Slips',     'Instant digital borrowing slips with scannable QR codes'],
+            ['Real-time Updates', 'Notifications for every reservation status change'],
+            ['Online Payments',   'Pay penalty fines via GCash or Maya instantly'],
           ].map(([title, desc]) => (
             <div key={title} className="flex items-start gap-3">
               <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: 'rgba(244,196,48,0.2)' }}>
@@ -139,16 +138,6 @@ export default function LoginPage() {
                 <p className="text-sm font-semibold text-white">{title}</p>
                 <p className="text-xs leading-snug" style={{ color: '#9B6070' }}>{desc}</p>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Stats bar */}
-        <div className="relative flex items-center gap-8 mb-6 border-t pt-6" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-          {[['500+', 'Equipment Items'], ['3K+', 'Active Users'], ['98%', 'On-time Rate']].map(([val, label]) => (
-            <div key={label}>
-              <p className="text-white font-black text-xl leading-none">{val}</p>
-              <p className="text-[10px] mt-0.5 uppercase tracking-wide" style={{ color: '#7A4555' }}>{label}</p>
             </div>
           ))}
         </div>

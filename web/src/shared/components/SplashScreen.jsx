@@ -13,10 +13,10 @@ export default function SplashScreen({ onDone }) {
     <div
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center transition-opacity duration-500"
       style={{
-        background: 'linear-gradient(150deg, #BE1B39 0%, #8C1229 45%, #120709 100%)',
+        backgroundColor: '#120709',
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(150deg, #BE1B39 0%, #8C1229 45%, #120709 100%)',
+        backgroundSize: '24px 24px, 100% 100%',
         opacity: fading ? 0 : 1,
-        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
       }}
     >
       {/* Decorative circles */}
