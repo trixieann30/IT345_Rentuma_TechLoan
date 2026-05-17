@@ -140,6 +140,8 @@ export default function InventoryManagement() {
           return
         }
         setUploadingImage(false)
+      } else if (!editItem && savedId) {
+        try { await inventoryService.autoImage(savedId) } catch { /* non-critical */ }
       }
 
       await fetchItems()
