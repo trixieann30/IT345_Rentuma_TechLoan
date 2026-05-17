@@ -13,16 +13,13 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class EmailService {
 
-    private static final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
+    private static final String RESEND_URL = "https://api.resend.com/emails";
 
-    @Value("${app.email.brevo.api-key:}")
+    @Value("${app.email.resend.api-key:}")
     private String apiKey;
 
-    @Value("${app.email.brevo.sender-email:noreply@techloan.app}")
-    private String senderEmail;
-
-    @Value("${app.email.brevo.sender-name:TechLoan CIT-U}")
-    private String senderName;
+    @Value("${app.email.resend.sender:TechLoan CIT-U <onboarding@resend.dev>}")
+    private String sender;
 
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
@@ -73,31 +70,31 @@ public class EmailService {
 
     private void trySend(String to, String toName, String subject, String body) {
         if (apiKey.isBlank()) {
-            System.err.println("[EmailService] BREVO_API_KEY not set. Skipping email to: " + to);
+            System.err.println("[EmailService] RESEND_API_KEY not set. Skipping email to: " + to);
             return;
         }
         CompletableFuture.runAsync(() -> {
             try {
                 String payload = "{"
-                        + "\"sender\":{\"name\":" + q(senderName) + ",\"email\":" + q(senderEmail) + "},"
-                        + "\"to\":[{\"email\":" + q(to) + ",\"name\":" + q(toName) + "}],"
+                        + "\"from\":" + q(sender) + ","
+                        + "\"to\":[" + q(to) + "],"
                         + "\"subject\":" + q(subject) + ","
-                        + "\"textContent\":" + q(body)
+                        + "\"text\":" + q(body)
                         + "}";
 
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(BREVO_URL))
-                        .header("api-key", apiKey)
+                        .uri(URI.create(RESEND_URL))
+                        .header("Authorization", "Bearer " + apiKey)
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
                         .build();
 
                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                if (response.statusCode() == 201) {
+                if (response.statusCode() == 200 || response.statusCode() == 201) {
                     System.out.println("[EmailService] Sent email to " + to);
                 } else {
-                    System.err.println("[EmailService] Brevo returned " + response.statusCode() + ": " + response.body());
+                    System.err.println("[EmailService] Resend returned " + response.statusCode() + ": " + response.body());
                 }
             } catch (Exception e) {
                 System.err.println("[EmailService] Failed to send email to " + to + ": " + e.getMessage());

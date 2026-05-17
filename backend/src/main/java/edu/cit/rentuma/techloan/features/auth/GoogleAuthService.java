@@ -109,7 +109,6 @@ public class GoogleAuthService {
 
             eventPublisher.publishGoogleAuthSuccess(savedUser);
 
-            // If email is not verified, don't return token; ask user to verify first
             if (!savedUser.isEmailVerified()) {
                 return AuthResponse.builder()
                         .success(true)
