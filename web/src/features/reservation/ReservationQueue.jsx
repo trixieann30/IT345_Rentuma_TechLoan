@@ -29,7 +29,7 @@ export default function ReservationQueue() {
     setError('')
     try {
       const res = await reservationService.getReservations(statusFilter === 'ALL' ? null : statusFilter)
-      setReservations(res.data)
+      setReservations(Array.isArray(res.data) ? res.data : [])
     } catch {
       setError('Failed to load reservations.')
     } finally {
