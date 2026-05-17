@@ -50,6 +50,11 @@ public class NotificationListener {
                     "Your reservation for \"" + itemName + "\" has been approved. Pick it up soon!",
                     "RESERVATION_APPROVED");
 
+            case RELEASED -> notificationService.create(student.getId(),
+                    "Item Released",
+                    "\"" + itemName + "\" has been handed to you. Please return it by the due date.",
+                    "RESERVATION_RELEASED");
+
             case REJECTED -> notificationService.create(student.getId(),
                     "Reservation Rejected",
                     "Your reservation for \"" + itemName + "\" was rejected.",

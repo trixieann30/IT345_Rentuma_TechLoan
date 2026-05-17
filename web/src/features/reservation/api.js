@@ -6,6 +6,7 @@ export const reservationService = {
   getReservation:     (id)           => api.get(`/reservations/${id}`),
   approveReservation: (id)           => api.put(`/reservations/${id}/approve`),
   rejectReservation:  (id, reason)   => api.put(`/reservations/${id}/reject`, { reason }),
+  releaseReservation: (id)           => api.put(`/reservations/${id}/release`),
   returnReservation:  (id)           => api.put(`/reservations/${id}/return`),
   markOverdue:        (id)           => api.put(`/reservations/${id}/overdue`),
   getQR:              (id)           => api.get(`/reservations/${id}/qr`, { responseType: 'blob' }),

@@ -181,6 +181,26 @@ public class BorrowController {
         return ResponseEntity.ok(dtoFactory.toBorrowRequestDTO(updated));
     }
 
+    @PutMapping("/{id}/release")
+    public ResponseEntity<?> releaseReservation(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        if (!isCustodian(userDetails)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Only custodians can release items"));
+        }
+
+        BorrowRequest request = loanService.getBorrowRequest(id);
+        if (request.getStatus() != BorrowStatus.APPROVED) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Only approved reservations can be released"));
+        }
+
+        BorrowRequest updated = loanService.updateStatus(id, BorrowStatus.RELEASED);
+        return ResponseEntity.ok(dtoFactory.toBorrowRequestDTO(updated));
+    }
+
     @PutMapping("/{id}/return")
     public ResponseEntity<?> returnReservation(
             @PathVariable Long id,

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { reservationService } from './api'
 
-const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'RETURNED']
+const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'RELEASED', 'REJECTED', 'RETURNED', 'OVERDUE']
 
 const BADGE = {
   PENDING:  'badge-pending',
   APPROVED: 'badge-approved',
+  RELEASED: 'badge-released',
   REJECTED: 'badge-rejected',
   RETURNED: 'badge-returned',
   OVERDUE:  'badge-overdue',
@@ -63,6 +64,18 @@ export default function ReservationQueue() {
     }
   }
 
+  async function handleRelease(id) {
+    setActionLoading(p => ({ ...p, [id]: 'releasing' }))
+    try {
+      await reservationService.releaseReservation(id)
+      await fetchReservations()
+    } catch (e) {
+      setError(e?.response?.data?.error || 'Failed to release item.')
+    } finally {
+      setActionLoading(p => ({ ...p, [id]: null }))
+    }
+  }
+
   async function handleReturn(id) {
     setActionLoading(p => ({ ...p, [id]: 'returning' }))
     try {
@@ -89,8 +102,8 @@ export default function ReservationQueue() {
         {[
           { label: 'Pending',  status: 'PENDING',  color: '#F4C430', bg: '#FFFBEB' },
           { label: 'Approved', status: 'APPROVED', color: '#10B981', bg: '#ECFDF5' },
-          { label: 'Returned', status: 'RETURNED', color: '#3B82F6', bg: '#EFF6FF' },
-          { label: 'Rejected', status: 'REJECTED', color: '#BE1B39', bg: '#FDF2F4' },
+          { label: 'Released', status: 'RELEASED', color: '#8B5CF6', bg: '#F5F3FF' },
+          { label: 'Overdue',  status: 'OVERDUE',  color: '#EF4444', bg: '#FEF2F2' },
         ].map(({ label, status, color, bg }) => (
           <button
             key={status}
@@ -163,7 +176,15 @@ export default function ReservationQueue() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {reservations.map(r => (
-                  <tr key={r.id} className="hover:bg-gray-50/50 transition-colors">
+                  <tr key={r.id}
+                    className="transition-colors"
+                    style={r.status === 'OVERDUE'
+                      ? { background: '#FEF2F2', borderLeft: '3px solid #EF4444' }
+                      : {}
+                    }
+                    onMouseEnter={e => { if (r.status !== 'OVERDUE') e.currentTarget.style.background = '#F9FAFB' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = r.status === 'OVERDUE' ? '#FEF2F2' : '' }}
+                  >
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-semibold text-gray-800 text-sm">{r.borrowerName || r.userEmail}</p>
@@ -222,6 +243,18 @@ export default function ReservationQueue() {
                           </>
                         )}
                         {r.status === 'APPROVED' && (
+                          <button
+                            onClick={() => handleRelease(r.id)}
+                            disabled={!!actionLoading[r.id]}
+                            className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg transition-colors disabled:opacity-60"
+                            style={{ background: '#8B5CF6' }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#7C3AED'}
+                            onMouseLeave={e => e.currentTarget.style.background = '#8B5CF6'}
+                          >
+                            {actionLoading[r.id] === 'releasing' ? '…' : '↗ Release'}
+                          </button>
+                        )}
+                        {(r.status === 'RELEASED' || r.status === 'OVERDUE') && (
                           <button
                             onClick={() => handleReturn(r.id)}
                             disabled={!!actionLoading[r.id]}
