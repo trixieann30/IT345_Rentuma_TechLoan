@@ -21,6 +21,31 @@
             android:layout_height="3dp"
             android:background="@color/primary"/>
 
+        <!-- Equipment image -->
+        <ImageView
+            android:id="@+id/ivItemImage"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:background="#F3F4F6"
+            android:visibility="gone"/>
+
+        <!-- Image placeholder shown while loading / when no image -->
+        <FrameLayout
+            android:id="@+id/flImagePlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#F3F4F6"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="…"
+                android:textColor="#9CA3AF"
+                android:textSize="24sp"/>
+        </FrameLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

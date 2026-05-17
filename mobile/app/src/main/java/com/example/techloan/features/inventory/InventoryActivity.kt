@@ -14,6 +14,7 @@ class InventoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInventoryBinding
     private val viewModel: InventoryViewModel by viewModels()
     private lateinit var adapter: InventoryAdapter
+    private lateinit var token: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,28 +23,24 @@ class InventoryActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Browse Inventory"
+        supportActionBar?.title = "Browse Equipment"
+
+        token = "Bearer ${getSharedPreferences("techloan_prefs", MODE_PRIVATE).getString("jwt_token", "") ?: ""}"
 
         adapter = InventoryAdapter { item ->
-            val intent = Intent(this, CreateReservationActivity::class.java).apply {
+            startActivity(Intent(this, CreateReservationActivity::class.java).apply {
                 putExtra("item_id", item.id)
                 putExtra("item_name", item.itemName)
                 putExtra("item_max_qty", item.availableQuantity)
-            }
-            startActivity(intent)
+            })
         }
 
         binding.rvInventory.layoutManager = LinearLayoutManager(this)
         binding.rvInventory.adapter = adapter
 
-        val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
-        val token = "Bearer ${prefs.getString("jwt_token", "") ?: ""}"
-        viewModel.loadItems(token)
-
         observeViewModel()
+        viewModel.loadItems(token)
     }
-
-    override fun onSupportNavigateUp(): Boolean { finish(); return true }
 
     private fun observeViewModel() {
         viewModel.state.observe(this) { state ->
@@ -56,8 +53,9 @@ class InventoryActivity : AppCompatActivity() {
                 is InventoryState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     if (state.items.isEmpty()) {
-                        binding.tvEmpty.visibility = View.VISIBLE
                         binding.rvInventory.visibility = View.GONE
+                        binding.tvEmpty.text = "No equipment available."
+                        binding.tvEmpty.visibility = View.VISIBLE
                     } else {
                         binding.tvEmpty.visibility = View.GONE
                         binding.rvInventory.visibility = View.VISIBLE
@@ -66,10 +64,17 @@ class InventoryActivity : AppCompatActivity() {
                 }
                 is InventoryState.Error -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.rvInventory.visibility = View.GONE
                     binding.tvEmpty.text = state.message
                     binding.tvEmpty.visibility = View.VISIBLE
                 }
             }
         }
+
+        viewModel.imageUpdate.observe(this) { (id, url) ->
+            adapter.updateImage(id, url)
+        }
     }
+
+    override fun onSupportNavigateUp(): Boolean { finish(); return true }
 }

@@ -15,8 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,13 +64,20 @@ public class InventoryController {
                 toDTOList(inventoryRepository.findByItemNameContainingIgnoreCase(query)));
     }
 
+    private static final List<String> PREDEFINED_CATEGORIES = List.of(
+            "Laptop", "Tablet", "Camera", "Drone", "Monitor", "Keyboard",
+            "Mouse", "Projector", "Microphone", "Headphones", "Speaker",
+            "Storage", "Arduino", "Sensors", "Network Tools", "Others"
+    );
+
     @GetMapping("/categories")
     public ResponseEntity<List<String>> getCategories() {
-        List<String> categories = inventoryRepository.findAll().stream()
+        Set<String> merged = new LinkedHashSet<>(PREDEFINED_CATEGORIES);
+        inventoryRepository.findAll().stream()
                 .map(InventoryItem::getCategory)
-                .distinct()
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(categories);
+                .filter(c -> c != null && !c.isBlank())
+                .forEach(merged::add);
+        return ResponseEntity.ok(new ArrayList<>(merged));
     }
 
     @PostMapping

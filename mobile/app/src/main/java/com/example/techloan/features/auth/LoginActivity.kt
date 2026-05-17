@@ -3,20 +3,20 @@ package com.example.techloan.features.auth
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.example.techloan.databinding.ActivityLoginBinding
 import com.example.techloan.features.custodian.CustodianDashboardActivity
 import com.example.techloan.features.dashboard.DashboardActivity
-import com.example.techloan.shared.model.GoogleAuthRequestDto
-import com.example.techloan.shared.network.RetrofitClient
+import com.example.techloan.shared.model.UserDto
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
             val account = task.getResult(ApiException::class.java)
             val idToken = account.idToken
             if (idToken != null) {
-                sendGoogleToken(idToken, "STUDENT")
+                viewModel.loginWithGoogle(idToken)
             } else {
                 showError("Google sign-in failed: no ID token received")
             }
@@ -59,15 +59,16 @@ class LoginActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.btnLogin.setOnClickListener {
             if (validateInputs()) {
-                val email = binding.etEmail.text.toString().trim().lowercase()
-                val password = binding.etPassword.text.toString().trim()
-                viewModel.login(email, password)
+                viewModel.login(
+                    binding.etEmail.text.toString().trim().lowercase(),
+                    binding.etPassword.text.toString().trim()
+                )
             }
         }
 
         binding.btnGoogleSignIn.setOnClickListener {
             binding.tvError.visibility = View.GONE
-            binding.progressBar.visibility = View.VISIBLE
+            showLoading()
             googleSignInClient.signOut().addOnCompleteListener {
                 signInLauncher.launch(googleSignInClient.signInIntent)
             }
@@ -76,120 +77,109 @@ class LoginActivity : AppCompatActivity() {
         binding.btnGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+
+        binding.tvForgotPassword.setOnClickListener { showForgotPasswordDialog() }
     }
 
-    private fun sendGoogleToken(idToken: String, role: String) {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.tvError.visibility = View.GONE
-
-        lifecycleScope.launch {
-            try {
-                val res = RetrofitClient.api.googleSignIn(
-                    GoogleAuthRequestDto(idToken = idToken, role = role)
-                )
-                binding.progressBar.visibility = View.GONE
-                if (res.isSuccessful) {
-                    val body = res.body()!!
-                    saveSessionAndNavigate(
-                        token = body.token ?: "",
-                        userId = body.user?.id ?: 0L,
-                        fullName = body.user?.fullName ?: "",
-                        email = body.user?.email ?: "",
-                        role = body.user?.role ?: ""
-                    )
-                } else {
-                    showError("Sign-in failed (${res.code()}): check your Google account is @cit.edu")
+    private fun observeViewModel() {
+        viewModel.authState.observe(this) { state ->
+            when (state) {
+                is AuthState.Loading -> showLoading()
+                is AuthState.Success -> {
+                    hideLoading()
+                    val user = state.user ?: return@observe
+                    saveSessionAndNavigate(state.token, user)
                 }
-            } catch (e: Exception) {
-                binding.progressBar.visibility = View.GONE
-                showError("Network error: ${e.message}")
+                is AuthState.Error -> {
+                    hideLoading()
+                    showError(state.message)
+                }
+                is AuthState.Idle -> hideLoading()
+            }
+        }
+
+        viewModel.forgotPasswordState.observe(this) { state ->
+            when (state) {
+                is ForgotPasswordState.Success ->
+                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
+                is ForgotPasswordState.Error ->
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                else -> {}
             }
         }
     }
 
-    private fun saveSessionAndNavigate(
-        token: String, userId: Long, fullName: String, email: String, role: String
-    ) {
-        val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
-        prefs.edit()
+    private fun showForgotPasswordDialog() {
+        val input = EditText(this).apply {
+            hint = "Enter your CIT-U email"
+            inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setPadding(48, 32, 48, 16)
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Reset Password")
+            .setMessage("Enter your registered email and we'll send you a reset link.")
+            .setView(input)
+            .setPositiveButton("Send Link") { _, _ ->
+                val email = input.text.toString().trim()
+                if (email.isNotEmpty()) viewModel.forgotPassword(email)
+                else Toast.makeText(this, "Please enter your email.", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun saveSessionAndNavigate(token: String, user: UserDto) {
+        getSharedPreferences("techloan_prefs", MODE_PRIVATE).edit()
             .putString("jwt_token", token)
-            .putLong("user_id", userId)
-            .putString("user_name", fullName)
-            .putString("user_email", email)
-            .putString("user_role", role)
+            .putLong("user_id", user.id ?: 0L)
+            .putString("user_name", user.fullName ?: "")
+            .putString("user_email", user.email ?: "")
+            .putString("user_role", user.role ?: "")
             .apply()
 
         binding.tvSuccess.text = "Sign-in successful!"
         binding.tvSuccess.visibility = View.VISIBLE
 
         binding.root.postDelayed({
-            val target = if (role == "CUSTODIAN") CustodianDashboardActivity::class.java
+            val target = if (user.role == "CUSTODIAN") CustodianDashboardActivity::class.java
                          else DashboardActivity::class.java
-            val intent = Intent(this, target)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            startActivity(Intent(this, target).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
             finish()
-        }, 1000)
+        }, 900)
     }
 
-    private fun showError(msg: String) {
-        binding.tvError.text = msg
+    private fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnLogin.isEnabled = false
+        binding.tvError.visibility = View.GONE
+    }
+
+    private fun hideLoading() {
+        binding.progressBar.visibility = View.GONE
+        binding.btnLogin.isEnabled = true
+    }
+
+    private fun showError(message: String) {
+        binding.tvError.text = message
         binding.tvError.visibility = View.VISIBLE
     }
 
     private fun validateInputs(): Boolean {
-        var isValid = true
-        val email = binding.etEmail.text.toString().trim().lowercase()
-        val password = binding.etPassword.text.toString().trim()
-
+        var valid = true
         binding.tilEmail.error = null
         binding.tilPassword.error = null
         binding.tvError.visibility = View.GONE
 
-        if (email.isEmpty()) {
-            binding.tilEmail.error = "Email is required"; isValid = false
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.error = "Enter a valid email address"; isValid = false
-        }
-        if (password.isEmpty()) {
-            binding.tilPassword.error = "Password is required"; isValid = false
-        }
-        return isValid
-    }
+        val email = binding.etEmail.text.toString().trim()
+        val password = binding.etPassword.text.toString().trim()
 
-    private fun observeViewModel() {
-        viewModel.authState.observe(this) { state ->
-            when (state) {
-                is AuthState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.btnLogin.isEnabled = false
-                    binding.tvError.visibility = View.GONE
-                }
-                is AuthState.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnLogin.isEnabled = true
-                    binding.tvSuccess.visibility = View.VISIBLE
-                    binding.tvSuccess.text = state.message ?: "Login successful!"
-                    binding.tvError.visibility = View.GONE
-
-                    saveSessionAndNavigate(
-                        token = state.token,
-                        userId = state.user?.id ?: 0L,
-                        fullName = state.user?.fullName ?: "",
-                        email = state.user?.email ?: "",
-                        role = state.user?.role ?: ""
-                    )
-                }
-                is AuthState.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnLogin.isEnabled = true
-                    showError(state.message)
-                }
-                is AuthState.Idle -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnLogin.isEnabled = true
-                }
-            }
+        if (email.isEmpty()) { binding.tilEmail.error = "Email is required"; valid = false }
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.error = "Enter a valid email"; valid = false
         }
+        if (password.isEmpty()) { binding.tilPassword.error = "Password is required"; valid = false }
+        return valid
     }
 }

@@ -42,8 +42,13 @@ data class InventoryItemDto(
     val description: String? = null,
     val category: String? = null,
     val availableQuantity: Int = 0,
-    val totalQuantity: Int = 0
+    val totalQuantity: Int = 0,
+    val imageUrl: String? = null,
+    val userProvidedImage: Boolean = false
 )
+
+data class ForgotPasswordRequest(val email: String)
+data class ResetPasswordRequest(val token: String, val newPassword: String)
 
 data class CreateBorrowRequestDto(
     val inventoryId: Long,

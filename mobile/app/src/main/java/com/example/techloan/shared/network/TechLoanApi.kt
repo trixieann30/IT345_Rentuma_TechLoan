@@ -3,6 +3,7 @@ package com.example.techloan.shared.network
 import com.example.techloan.shared.model.AuthResponse
 import com.example.techloan.shared.model.BorrowRequestDto
 import com.example.techloan.shared.model.CreateBorrowRequestDto
+import com.example.techloan.shared.model.ForgotPasswordRequest
 import com.example.techloan.shared.model.GoogleAuthRequestDto
 import com.example.techloan.shared.model.InventoryItemDto
 import com.example.techloan.shared.model.LoanDto
@@ -10,6 +11,7 @@ import com.example.techloan.shared.model.LoginRequest
 import com.example.techloan.shared.model.NotificationDto
 import com.example.techloan.shared.model.PenaltySummaryDto
 import com.example.techloan.shared.model.RegisterRequest
+import com.example.techloan.shared.model.ResetPasswordRequest
 import com.example.techloan.shared.model.UnreadCountDto
 import com.example.techloan.shared.model.UserDto
 import okhttp3.ResponseBody
@@ -118,4 +120,16 @@ interface TechLoanApi {
     suspend fun markAllNotificationsRead(
         @Header("Authorization") token: String
     ): Response<Void>
+
+    @GET("inventory/{id}/auto-image")
+    suspend fun getAutoImage(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): Response<Map<String, String>>
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(@Body request: ForgotPasswordRequest): Response<Map<String, Any>>
+
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<Map<String, Any>>
 }
