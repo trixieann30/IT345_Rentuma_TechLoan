@@ -11,6 +11,7 @@ import com.example.techloan.features.auth.LoginActivity
 import com.example.techloan.features.inventory.InventoryActivity
 import com.example.techloan.features.loans.MyLoansActivity
 import com.example.techloan.features.notification.NotificationActivity
+import com.example.techloan.features.penalty.MyPenaltiesActivity
 import com.example.techloan.features.profile.ProfileActivity
 import com.example.techloan.features.reservation.MyReservationsActivity
 import com.example.techloan.shared.network.RetrofitClient
@@ -42,11 +43,17 @@ class DashboardActivity : AppCompatActivity() {
 
         binding.btnLogout.setOnClickListener { logout() }
 
-        binding.btnBrowse.setOnClickListener {
+        binding.cardBrowse.setOnClickListener {
             startActivity(Intent(this, InventoryActivity::class.java))
         }
-        binding.btnMyReservations.setOnClickListener {
+        binding.cardReservations.setOnClickListener {
             startActivity(Intent(this, MyReservationsActivity::class.java))
+        }
+        binding.cardLoans.setOnClickListener {
+            startActivity(Intent(this, MyLoansActivity::class.java))
+        }
+        binding.cardPenalties.setOnClickListener {
+            startActivity(Intent(this, MyPenaltiesActivity::class.java))
         }
 
         binding.bottomNav.setOnItemSelectedListener { item ->

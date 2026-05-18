@@ -7,6 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.techloan.shared.model.LoanDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
+private fun networkErrorMessage(e: Exception) = when {
+    e is SocketTimeoutException || e.message?.contains("timeout", true) == true ->
+        "Server is starting up. Please wait a moment and try again."
+    e is UnknownHostException -> "No internet connection. Please check your network."
+    else -> "Connection failed. Please try again."
+}
 
 sealed class LoanState {
     object Loading : LoanState()
@@ -30,7 +39,7 @@ class LoanViewModel : ViewModel() {
                     _state.value = LoanState.Error("Failed to load loans (${res.code()})")
                 }
             } catch (e: Exception) {
-                _state.value = LoanState.Error("Network error: ${e.message}")
+                _state.value = LoanState.Error(networkErrorMessage(e))
             }
         }
     }

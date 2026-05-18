@@ -8,9 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    // Use 10.0.2.2 for Android Emulator (maps to localhost on host machine).
-    // Change to your machine's IP when testing on a physical device.
-    private const val BASE_URL = "http://10.0.2.2:8080/api/"
+    private const val BASE_URL = "https://it345-rentuma-techloan.onrender.com/api/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -31,9 +29,9 @@ object RetrofitClient {
             response
         }
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(90, TimeUnit.SECONDS)
+        .readTimeout(90, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
     val api: TechLoanApi by lazy {

@@ -99,3 +99,27 @@ data class GoogleAuthRequestDto(
     val role: String,
     val personalEmail: String? = null
 )
+
+data class InitiatePaymentRequest(
+    val penaltyId: Long
+)
+
+data class PaymentResponse(
+    val id: Long = 0,
+    val penaltyId: Long = 0,
+    val amount: Int = 0,
+    val status: String = "",
+    val checkoutUrl: String? = null
+)
+
+data class AdminPenaltyDto(
+    val id: Long = 0,
+    val userId: Long = 0,
+    val userName: String? = null,
+    val userEmail: String? = null,
+    val itemName: String? = null,
+    val daysOverdue: Int = 0,
+    val penaltyPoints: Int = 0,
+    val paid: Boolean = false,
+    val calculatedAt: String? = null
+)

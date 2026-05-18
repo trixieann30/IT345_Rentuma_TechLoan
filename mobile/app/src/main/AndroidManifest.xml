@@ -38,6 +38,8 @@
         <activity android:name=".features.reservation.QRCodeViewActivity"           android:exported="false" />
         <activity android:name=".features.custodian.QRScanResultActivity"           android:exported="false" />
         <activity android:name=".features.notification.NotificationActivity"          android:exported="false" />
+        <activity android:name=".features.penalty.MyPenaltiesActivity"                android:exported="false" />
+        <activity android:name=".features.custodian.CustodianPenaltyManagementActivity" android:exported="false" />
 
     </application>
 </manifest>

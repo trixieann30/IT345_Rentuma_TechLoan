@@ -13,16 +13,62 @@
         android:layout_height="60dp"
         android:background="@color/header_dark"
         android:elevation="0dp"
-        app:title="Manage Loans"
+        app:title="Penalty Management"
         app:titleTextColor="@color/white"
         app:navigationIconTint="@color/white"/>
+
+    <!-- Filter chips -->
+    <LinearLayout
+        android:id="@+id/filterRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAll"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginEnd="8dp"
+            android:text="All"
+            app:chipBackgroundColor="@color/primary"
+            app:chipStrokeWidth="0dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-bold"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipUnpaid"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginEnd="8dp"
+            android:text="Unpaid"
+            app:chipBackgroundColor="@color/gray_100"
+            app:chipStrokeWidth="0dp"
+            android:textColor="@color/gray_600"
+            android:textSize="12sp"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPaid"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            app:chipBackgroundColor="@color/gray_100"
+            app:chipStrokeWidth="0dp"
+            android:text="Paid"
+            android:textColor="@color/gray_600"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLoans"
+            android:id="@+id/rvPenalties"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
@@ -38,6 +84,7 @@
             android:visibility="gone"/>
 
         <LinearLayout
+            android:id="@+id/emptyLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -55,7 +102,7 @@
                 android:id="@+id/tvEmpty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No active loans"
+                android:text="No penalties found"
                 android:textColor="@color/gray_400"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-medium"

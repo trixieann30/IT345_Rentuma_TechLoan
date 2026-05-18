@@ -5,9 +5,9 @@
     android:id="@+id/cardNotification"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginTop="6dp"
-    app:cardCornerRadius="14dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="@color/white">
 
@@ -15,10 +15,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="14dp"
+        android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Unread dot — crimson -->
+        <!-- Unread dot -->
         <View
             android:id="@+id/viewUnreadDot"
             android:layout_width="8dp"
@@ -36,7 +36,7 @@
                 android:id="@+id/tvNotifTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="sans-serif-bold"
                 android:textColor="@color/gray_900"
                 android:textSize="14sp"/>
 
@@ -44,15 +44,16 @@
                 android:id="@+id/tvNotifMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:textColor="@color/gray_600"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:lineSpacingExtra="2dp"/>
 
             <TextView
                 android:id="@+id/tvNotifTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="6dp"
                 android:textColor="@color/gray_400"
                 android:textSize="11sp"/>
         </LinearLayout>

@@ -42,15 +42,15 @@ class MyLoansActivity : AppCompatActivity() {
                 is LoanState.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.rvLoans.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
+                    binding.emptyLayout.visibility = View.GONE
                 }
                 is LoanState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     if (state.loans.isEmpty()) {
-                        binding.tvEmpty.visibility = View.VISIBLE
+                        binding.emptyLayout.visibility = View.VISIBLE
                         binding.rvLoans.visibility = View.GONE
                     } else {
-                        binding.tvEmpty.visibility = View.GONE
+                        binding.emptyLayout.visibility = View.GONE
                         binding.rvLoans.visibility = View.VISIBLE
                         adapter.updateLoans(state.loans)
                     }
@@ -58,7 +58,7 @@ class MyLoansActivity : AppCompatActivity() {
                 is LoanState.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.tvEmpty.text = state.message
-                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.emptyLayout.visibility = View.VISIBLE
                 }
             }
         }

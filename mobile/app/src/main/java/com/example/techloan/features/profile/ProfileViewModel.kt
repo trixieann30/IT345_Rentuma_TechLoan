@@ -8,6 +8,15 @@ import com.example.techloan.shared.model.PenaltySummaryDto
 import com.example.techloan.shared.model.UserDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
+private fun networkErrorMessage(e: Exception) = when {
+    e is SocketTimeoutException || e.message?.contains("timeout", true) == true ->
+        "Server is starting up. Please wait a moment and try again."
+    e is UnknownHostException -> "No internet connection. Please check your network."
+    else -> "Connection failed. Please try again."
+}
 
 data class ProfileData(val user: UserDto, val penalties: PenaltySummaryDto)
 
@@ -39,7 +48,7 @@ class ProfileViewModel : ViewModel() {
                     _state.value = ProfileState.Error("Failed to load profile (${userRes.code()})")
                 }
             } catch (e: Exception) {
-                _state.value = ProfileState.Error("Network error: ${e.message}")
+                _state.value = ProfileState.Error(networkErrorMessage(e))
             }
         }
     }

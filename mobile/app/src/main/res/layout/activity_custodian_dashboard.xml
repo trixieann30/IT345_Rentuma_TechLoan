@@ -218,6 +218,17 @@
                 android:textSize="14sp"/>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnManagePenalties"
+                style="@style/Widget.TechLoan.OutlineButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="10dp"
+                android:text="Penalty Management"
+                android:textSize="14sp"
+                app:strokeColor="@color/primary"
+                android:textColor="@color/primary"/>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnScanQr"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"

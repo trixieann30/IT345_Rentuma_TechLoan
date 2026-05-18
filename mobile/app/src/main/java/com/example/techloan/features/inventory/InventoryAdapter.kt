@@ -28,7 +28,8 @@ class InventoryAdapter(
         holder.binding.apply {
             tvItemName.text = item.itemName
             tvCategory.text = item.category ?: "General"
-            tvQuantity.text = "Available: ${item.availableQuantity}"
+            tvQuantity.text = "${item.availableQuantity} available"
+            btnReserve.setOnClickListener { onItemClick(item) }
             root.setOnClickListener { onItemClick(item) }
 
             val url = imageOverrides[item.id]

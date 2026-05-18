@@ -8,6 +8,15 @@ import com.example.techloan.shared.model.BorrowRequestDto
 import com.example.techloan.shared.model.CreateBorrowRequestDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
+private fun networkErrorMessage(e: Exception) = when {
+    e is SocketTimeoutException || e.message?.contains("timeout", true) == true ->
+        "Server is starting up. Please wait a moment and try again."
+    e is UnknownHostException -> "No internet connection. Please check your network."
+    else -> "Connection failed. Please try again."
+}
 
 sealed class ReservationState {
     object Idle : ReservationState()
@@ -34,7 +43,7 @@ class ReservationViewModel : ViewModel() {
                     _state.value = ReservationState.Error("Failed to submit (${res.code()}): $err")
                 }
             } catch (e: Exception) {
-                _state.value = ReservationState.Error("Network error: ${e.message}")
+                _state.value = ReservationState.Error(networkErrorMessage(e))
             }
         }
     }
@@ -50,7 +59,7 @@ class ReservationViewModel : ViewModel() {
                     _state.value = ReservationState.Error("Failed to load reservations (${res.code()})")
                 }
             } catch (e: Exception) {
-                _state.value = ReservationState.Error("Network error: ${e.message}")
+                _state.value = ReservationState.Error(networkErrorMessage(e))
             }
         }
     }

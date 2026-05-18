@@ -7,6 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.techloan.shared.model.InventoryItemDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
+private fun networkErrorMessage(e: Exception) = when {
+    e is SocketTimeoutException || e.message?.contains("timeout", true) == true ->
+        "Server is starting up. Please wait a moment and try again."
+    e is UnknownHostException -> "No internet connection. Please check your network."
+    else -> "Connection failed. Please try again."
+}
 
 sealed class InventoryState {
     object Loading : InventoryState()
@@ -35,7 +44,7 @@ class InventoryViewModel : ViewModel() {
                     _state.value = InventoryState.Error("Failed to load inventory (${res.code()})")
                 }
             } catch (e: Exception) {
-                _state.value = InventoryState.Error("Network error: ${e.message}")
+                _state.value = InventoryState.Error(networkErrorMessage(e))
             }
         }
     }

@@ -48,16 +48,16 @@ class InventoryActivity : AppCompatActivity() {
                 is InventoryState.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.rvInventory.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
+                    binding.layoutEmpty.visibility = View.GONE
                 }
                 is InventoryState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     if (state.items.isEmpty()) {
                         binding.rvInventory.visibility = View.GONE
                         binding.tvEmpty.text = "No equipment available."
-                        binding.tvEmpty.visibility = View.VISIBLE
+                        binding.layoutEmpty.visibility = View.VISIBLE
                     } else {
-                        binding.tvEmpty.visibility = View.GONE
+                        binding.layoutEmpty.visibility = View.GONE
                         binding.rvInventory.visibility = View.VISIBLE
                         adapter.updateItems(state.items)
                     }
@@ -66,7 +66,7 @@ class InventoryActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.GONE
                     binding.rvInventory.visibility = View.GONE
                     binding.tvEmpty.text = state.message
-                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.layoutEmpty.visibility = View.VISIBLE
                 }
             }
         }

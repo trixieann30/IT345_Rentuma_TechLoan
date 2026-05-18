@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="18dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="@color/white">
 
@@ -15,88 +16,110 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Image area -->
+        <!-- Image area with dark gradient placeholder -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp">
+            android:layout_height="150dp">
 
             <ImageView
                 android:id="@+id/ivItemImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:background="@color/gray_100"
+                android:background="@drawable/bg_item_placeholder"
                 android:visibility="gone"/>
 
+            <!-- Placeholder: dark gradient bg with centered icon -->
             <FrameLayout
                 android:id="@+id/flImagePlaceholder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/gray_100">
+                android:background="@drawable/bg_item_placeholder">
+
+                <!-- Decorative circle in placeholder -->
+                <View
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:alpha="0.12"
+                    android:background="@drawable/circle_primary"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="📷"
-                    android:textSize="32sp"/>
+                    android:textSize="28sp"/>
+
             </FrameLayout>
-        </FrameLayout>
 
-        <!-- Content -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tvItemName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-bold"
-                android:text="Item Name"
-                android:textColor="@color/gray_900"
-                android:textSize="15sp"
-                android:layout_marginBottom="3dp"/>
-
+            <!-- Category chip floating over image (bottom-left) -->
             <TextView
                 android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
-                android:textColor="@color/gray_400"
-                android:textSize="12sp"
-                android:layout_marginBottom="12dp"/>
+                android:layout_gravity="bottom|start"
+                android:layout_margin="10dp"
+                android:background="@drawable/bg_badge_red"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="Equipment"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-medium"/>
+
+        </FrameLayout>
+
+        <!-- Content row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="10dp">
+
+                <TextView
+                    android:id="@+id/tvItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-bold"
+                    android:text="Item Name"
+                    android:textColor="@color/gray_900"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="3dp"/>
 
                 <TextView
                     android:id="@+id/tvQuantity"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Available: 0"
+                    android:text="0 available"
                     android:textColor="@color/green_600"
                     android:textSize="12sp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/primary_surface"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
-                    android:text="Reserve →"
-                    android:textColor="@color/primary"
-                    android:textSize="12sp"
-                    android:fontFamily="sans-serif-bold"/>
-
             </LinearLayout>
+
+            <!-- Reserve button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReserve"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="Reserve"
+                android:textSize="12sp"
+                android:paddingHorizontal="16dp"
+                android:fontFamily="sans-serif-bold"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="12dp"/>
+
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

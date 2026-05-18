@@ -46,6 +46,9 @@ class CustodianDashboardActivity : AppCompatActivity() {
         binding.btnAllLoans.setOnClickListener {
             startActivity(Intent(this, AllLoansManagementActivity::class.java))
         }
+        binding.btnManagePenalties.setOnClickListener {
+            startActivity(Intent(this, CustodianPenaltyManagementActivity::class.java))
+        }
         binding.btnScanQr.setOnClickListener {
             val options = ScanOptions().apply {
                 setPrompt("Scan student's reservation QR code")

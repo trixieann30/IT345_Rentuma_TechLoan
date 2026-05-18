@@ -1,84 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        android:elevation="4dp"
+        android:layout_height="60dp"
+        android:background="@color/header_dark"
+        android:elevation="0dp"
         app:title="Borrow Item"
         app:titleTextColor="@color/white"
         app:navigationIconTint="@color/white"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="16dp">
 
             <!-- Item info card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/primary"
+                app:cardCornerRadius="18dp"
                 app:cardElevation="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <!-- Crimson accent strip -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:background="@color/primary"/>
-
-                    <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BORROWING"
+                        android:textColor="@color/white"
+                        android:alpha="0.6"
+                        android:textSize="10sp"
+                        android:fontFamily="sans-serif-bold"
+                        android:letterSpacing="0.10"
+                        android:layout_marginBottom="6dp"/>
+                    <TextView
+                        android:id="@+id/tvItemName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ITEM"
-                            android:textColor="@color/gray_400"
-                            android:textSize="10sp"
-                            android:fontFamily="sans-serif-bold"
-                            android:letterSpacing="0.1"
-                            android:layout_marginBottom="4dp"/>
-                        <TextView
-                            android:id="@+id/tvItemName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="sans-serif-bold"
-                            android:text="Item Name"
-                            android:textColor="@color/gray_900"
-                            android:textSize="20sp"/>
-                        <TextView
-                            android:id="@+id/tvMaxQty"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="Max available: 0"
-                            android:textColor="@color/green_600"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium"/>
-                    </LinearLayout>
+                        android:fontFamily="sans-serif-black"
+                        android:text="Item Name"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"/>
+                    <TextView
+                        android:id="@+id/tvMaxQty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Max available: 0"
+                        android:textColor="@color/white"
+                        android:alpha="0.75"
+                        android:textSize="13sp"
+                        android:fontFamily="sans-serif-medium"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -87,13 +76,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="18dp"
                 app:cardElevation="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -146,18 +135,20 @@
                         android:text="Return Date"
                         android:textColor="@color/gray_700"
                         android:textSize="12sp"/>
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPickDate"
                         style="@style/Widget.TechLoan.OutlineButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_marginBottom="6dp"
                         android:text="Pick a Date"/>
+
                     <TextView
                         android:id="@+id/tvSelectedDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="18dp"
+                        android:layout_marginBottom="20dp"
                         android:fontFamily="sans-serif-medium"
                         android:text=""
                         android:textColor="@color/primary"
@@ -176,7 +167,7 @@
                         android:id="@+id/btnSubmit"
                         style="@style/Widget.TechLoan.Button"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="52dp"
                         android:text="Submit Request"
                         android:textSize="15sp"/>
 
@@ -186,4 +177,4 @@
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

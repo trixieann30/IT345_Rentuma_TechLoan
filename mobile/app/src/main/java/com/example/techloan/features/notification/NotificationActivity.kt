@@ -69,6 +69,8 @@ class NotificationActivity : AppCompatActivity() {
         }
 
         viewModel.load(token)
+        // Auto-mark all as read when notification screen opens (mirrors web bell behaviour)
+        viewModel.markAllRead(token)
     }
 
     override fun onSupportNavigateUp(): Boolean { finish(); return true }

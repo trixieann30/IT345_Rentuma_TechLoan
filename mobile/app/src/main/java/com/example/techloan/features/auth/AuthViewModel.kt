@@ -11,6 +11,15 @@ import com.example.techloan.shared.model.RegisterRequest
 import com.example.techloan.shared.model.UserDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
+private fun networkErrorMessage(e: Exception) = when {
+    e is SocketTimeoutException || e.message?.contains("timeout", true) == true ->
+        "Server is starting up. Please wait a moment and try again."
+    e is UnknownHostException -> "No internet connection. Please check your network."
+    else -> "Connection failed. Please try again."
+}
 
 sealed class AuthState {
     object Idle : AuthState()
@@ -51,7 +60,7 @@ class AuthViewModel : ViewModel() {
                     _authState.value = AuthState.Error(msg)
                 }
             } catch (e: Exception) {
-                _authState.value = AuthState.Error("Network error: ${e.message}")
+                _authState.value = AuthState.Error(networkErrorMessage(e))
             }
         }
     }
@@ -70,7 +79,7 @@ class AuthViewModel : ViewModel() {
                     _authState.value = AuthState.Error("Sign-in failed: check your Google account is @cit.edu")
                 }
             } catch (e: Exception) {
-                _authState.value = AuthState.Error("Network error: ${e.message}")
+                _authState.value = AuthState.Error(networkErrorMessage(e))
             }
         }
     }
@@ -95,7 +104,7 @@ class AuthViewModel : ViewModel() {
                     _authState.value = AuthState.Error(msg)
                 }
             } catch (e: Exception) {
-                _authState.value = AuthState.Error("Network error: ${e.message}")
+                _authState.value = AuthState.Error(networkErrorMessage(e))
             }
         }
     }
@@ -113,7 +122,7 @@ class AuthViewModel : ViewModel() {
                     _forgotPasswordState.value = ForgotPasswordState.Error("Request failed. Please try again.")
                 }
             } catch (e: Exception) {
-                _forgotPasswordState.value = ForgotPasswordState.Error("Network error: ${e.message}")
+                _forgotPasswordState.value = ForgotPasswordState.Error(networkErrorMessage(e))
             } finally {
                 _forgotPasswordState.value = ForgotPasswordState.Idle
             }

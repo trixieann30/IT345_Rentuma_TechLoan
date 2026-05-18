@@ -1,14 +1,17 @@
 package com.example.techloan.shared.network
 
+import com.example.techloan.shared.model.AdminPenaltyDto
 import com.example.techloan.shared.model.AuthResponse
 import com.example.techloan.shared.model.BorrowRequestDto
 import com.example.techloan.shared.model.CreateBorrowRequestDto
 import com.example.techloan.shared.model.ForgotPasswordRequest
 import com.example.techloan.shared.model.GoogleAuthRequestDto
+import com.example.techloan.shared.model.InitiatePaymentRequest
 import com.example.techloan.shared.model.InventoryItemDto
 import com.example.techloan.shared.model.LoanDto
 import com.example.techloan.shared.model.LoginRequest
 import com.example.techloan.shared.model.NotificationDto
+import com.example.techloan.shared.model.PaymentResponse
 import com.example.techloan.shared.model.PenaltySummaryDto
 import com.example.techloan.shared.model.RegisterRequest
 import com.example.techloan.shared.model.ResetPasswordRequest
@@ -132,4 +135,15 @@ interface TechLoanApi {
 
     @POST("auth/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<Map<String, Any>>
+
+    @POST("payments/initiate")
+    suspend fun initiatePayment(
+        @Header("Authorization") token: String,
+        @Body request: InitiatePaymentRequest
+    ): Response<PaymentResponse>
+
+    @GET("penalties")
+    suspend fun getAllPenalties(
+        @Header("Authorization") token: String
+    ): Response<List<AdminPenaltyDto>>
 }

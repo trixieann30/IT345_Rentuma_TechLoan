@@ -9,8 +9,8 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
+        android:layout_height="60dp"
+        android:background="@color/header_dark"
         android:elevation="0dp"
         app:title="My Profile"
         app:titleTextColor="@color/white"
@@ -36,112 +36,99 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Hero section — crimson gradient feel -->
-            <androidx.cardview.widget.CardView
+            <!-- Avatar hero -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/primary"
-                app:cardCornerRadius="0dp"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@color/header_dark"
+                android:paddingTop="28dp"
+                android:paddingBottom="32dp"
+                android:paddingHorizontal="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/primary"
+                    android:layout_marginBottom="14dp">
+                    <TextView
+                        android:id="@+id/tvInitials"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="U"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        android:fontFamily="sans-serif-black"/>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:paddingTop="28dp"
-                    android:paddingBottom="28dp"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp">
+                    android:text="—"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-black"/>
 
-                    <!-- Initials avatar -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        app:cardCornerRadius="36dp"
-                        app:cardElevation="4dp"
-                        app:cardBackgroundColor="@color/white"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:id="@+id/tvInitials"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="U"
-                            android:textColor="@color/primary"
-                            android:textSize="28sp"
-                            android:fontFamily="sans-serif-bold"/>
-                    </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textColor="#9B6070"
+                    android:textSize="13sp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="10dp"/>
 
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="999dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/gold">
                     <TextView
-                        android:id="@+id/tvName"
+                        android:id="@+id/tvRole"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="—"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:fontFamily="sans-serif-bold"/>
+                        android:textColor="@color/gray_900"
+                        android:textSize="11sp"
+                        android:fontFamily="sans-serif-bold"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="5dp"/>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textColor="@color/white"
-                        android:alpha="0.8"
-                        android:textSize="13sp"
-                        android:layout_marginTop="3dp"/>
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="999dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/gold"
-                        android:layout_marginTop="10dp">
-                        <TextView
-                            android:id="@+id/tvRole"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="—"
-                            android:textColor="@color/gray_900"
-                            android:textSize="11sp"
-                            android:fontFamily="sans-serif-bold"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:paddingTop="5dp"
-                            android:paddingBottom="5dp"/>
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Content padding wrapper -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Account info card -->
+                <!-- Account details card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="14dp"
+                    app:cardCornerRadius="18dp"
                     app:cardElevation="0dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="18dp">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="14dp"
+                            android:layout_marginBottom="16dp"
                             android:fontFamily="sans-serif-bold"
-                            android:letterSpacing="0.1"
+                            android:letterSpacing="0.08"
                             android:text="ACCOUNT DETAILS"
                             android:textColor="@color/gray_400"
                             android:textSize="10sp"/>
@@ -156,7 +143,7 @@
                             android:id="@+id/tvStudentId"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
+                            android:layout_marginBottom="14dp"
                             android:fontFamily="sans-serif-medium"
                             android:text="—"
                             android:textColor="@color/gray_900"
@@ -166,7 +153,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/gray_100"
-                            android:layout_marginBottom="12dp"/>
+                            android:layout_marginBottom="14dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -182,51 +169,61 @@
                             android:text="—"
                             android:textColor="@color/gray_900"
                             android:textSize="15sp"/>
-
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Penalty card -->
+                <!-- Penalty points card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardPenalty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/green_surface"
-                    app:cardCornerRadius="14dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="18dp"
                     app:cardElevation="0dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="20dp">
+                        android:orientation="horizontal"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Unpaid Penalty Points"
+                                android:textColor="@color/gray_400"
+                                android:textSize="11sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:layout_marginBottom="4dp"/>
+                            <TextView
+                                android:id="@+id/tvPenaltyPoints"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:text="0"
+                                android:textColor="@color/primary"
+                                android:textSize="40sp"/>
+                        </LinearLayout>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="6dp"
-                            android:text="Unpaid Penalty Points"
-                            android:textColor="@color/gray_600"
-                            android:textSize="12sp"
-                            android:fontFamily="sans-serif-medium"/>
-                        <TextView
-                            android:id="@+id/tvPenaltyPoints"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-bold"
-                            android:text="0"
-                            android:textColor="@color/green_600"
-                            android:textSize="44sp"/>
+                            android:text="pts"
+                            android:textColor="@color/gray_300"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-bold"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Sign out -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogout"
                     style="@style/Widget.TechLoan.OutlineButton"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_height="52dp"
                     android:text="Sign Out"/>
 
             </LinearLayout>

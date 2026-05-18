@@ -48,15 +48,15 @@ class MyReservationsActivity : AppCompatActivity() {
                 is ReservationState.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.rvReservations.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
+                    binding.emptyLayout.visibility = View.GONE
                 }
                 is ReservationState.ListSuccess -> {
                     binding.progressBar.visibility = View.GONE
                     if (state.items.isEmpty()) {
-                        binding.tvEmpty.visibility = View.VISIBLE
+                        binding.emptyLayout.visibility = View.VISIBLE
                         binding.rvReservations.visibility = View.GONE
                     } else {
-                        binding.tvEmpty.visibility = View.GONE
+                        binding.emptyLayout.visibility = View.GONE
                         binding.rvReservations.visibility = View.VISIBLE
                         adapter.updateItems(state.items)
                     }
@@ -64,7 +64,7 @@ class MyReservationsActivity : AppCompatActivity() {
                 is ReservationState.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.tvEmpty.text = state.message
-                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.emptyLayout.visibility = View.VISIBLE
                 }
                 else -> {}
             }
