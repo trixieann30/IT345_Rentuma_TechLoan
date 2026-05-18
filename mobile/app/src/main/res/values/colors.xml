@@ -11,6 +11,9 @@
     <color name="gold_dark">#D4A420</color>
     <color name="coral">#E06060</color>
     <color name="sidebar">#120709</color>
+    <color name="header_dark">#2E1520</color>
+    <color name="purple_released">#8B5CF6</color>
+    <color name="blue_returned">#3B82F6</color>
 
     <!-- Surface tints -->
     <color name="primary_surface">#FDF2F4</color>

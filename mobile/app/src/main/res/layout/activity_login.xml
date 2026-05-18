@@ -10,83 +10,88 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="0dp"
-        android:paddingBottom="24dp">
+        android:paddingBottom="32dp">
 
-        <!-- Hero header -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardHeader"
+        <!-- Dark hero header -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/primary"
+            android:layout_height="220dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:background="@color/header_dark"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp">
 
-                <!-- Logo -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="@color/white"
-                    android:layout_marginBottom="12dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/techloan_logo"
-                        android:scaleType="centerInside"
-                        android:padding="4dp"
-                        android:contentDescription="TechLoan Logo"/>
-                </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginBottom="14dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/techloan_logo"
+                    android:scaleType="centerInside"
+                    android:padding="6dp"
+                    android:contentDescription="TechLoan Logo"/>
+            </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TechLoan"
-                    android:textColor="@color/white"
-                    android:textSize="26sp"
-                    android:fontFamily="sans-serif-bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sign in to your account"
-                    android:textColor="@color/white"
-                    android:alpha="0.75"
-                    android:textSize="13sp"
-                    android:fontFamily="sans-serif"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TechLoan"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CIT-U Lab Equipment System"
+                android:textColor="#9B6070"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
 
-        <!-- Form Card -->
+        <!-- Form card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@color/white"
-            android:layout_marginTop="-20dp"
-            app:layout_constraintTop_toBottomOf="@id/cardHeader"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="-24dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome back"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="@color/gray_900"
+                    android:layout_marginBottom="2dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign in to manage your tech loans"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_400"
+                    android:layout_marginBottom="24dp"/>
 
                 <TextView
                     android:id="@+id/labelEmail"
@@ -103,14 +108,14 @@
                     style="@style/Widget.TechLoan.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp">
+                    android:layout_marginBottom="16dp">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
                         android:imeOptions="actionNext"
-                        android:hint="you@email.com"/>
+                        android:hint="you@cit.edu"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -128,7 +133,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:passwordToggleEnabled="true"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="8dp">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPassword"
                         android:layout_width="match_parent"
@@ -139,13 +144,28 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:id="@+id/tvForgotPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="20dp"
+                    android:text="Forgot password?"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <TextView
                     android:id="@+id/tvError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary"
                     android:textSize="12sp"
                     android:visibility="gone"
-                    android:layout_marginBottom="8dp"
+                    android:background="@color/red_50"
+                    android:padding="10dp"
+                    android:layout_marginBottom="12dp"
                     android:fontFamily="sans-serif"/>
 
                 <TextView
@@ -157,78 +177,50 @@
                     android:visibility="gone"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Login successful! Redirecting..."/>
+                    android:text="Sign-in successful!"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogin"
                     style="@style/Widget.TechLoan.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="52dp"
                     android:text="Sign In"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp"
+                    android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:id="@+id/tvForgotPassword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="10dp"
-                    android:text="Forgot password?"
-                    android:textColor="@color/primary"
-                    android:textSize="12sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:clickable="true"
-                    android:focusable="true"/>
-
-                <!-- OR divider -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp">
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"
-                        android:background="@color/gray_200"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="  OR  "
-                        android:textColor="@color/gray_400"
-                        android:textSize="11sp"/>
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"
-                        android:background="@color/gray_200"/>
+                    <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="@color/gray_200"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="  OR  " android:textColor="@color/gray_400" android:textSize="11sp"/>
+                    <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="@color/gray_200"/>
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGoogleSignIn"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="52dp"
                     android:text="Continue with Google"
                     android:textColor="@color/gray_900"
                     android:textSize="14sp"
-                    app:strokeColor="@color/gray_300"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="12dp"/>
+                    app:strokeColor="@color/gray_200"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="14dp"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:indeterminateTint="@color/primary"
-            android:layout_margin="8dp"
+            android:layout_margin="12dp"
             app:layout_constraintTop_toBottomOf="@id/cardForm"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -237,11 +229,11 @@
             android:id="@+id/btnGoToRegister"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Don't have an account? Create Account"
+            android:layout_height="44dp"
+            android:text="Don't have an account? Create one"
             android:textColor="@color/primary"
             android:textSize="13sp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@id/progressBar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

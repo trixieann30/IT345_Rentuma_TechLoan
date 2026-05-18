@@ -6,22 +6,50 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <!-- Crimson Toolbar -->
+    <!-- Dark header -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        android:elevation="4dp"
-        app:title="TechLoan"
+        android:layout_height="60dp"
+        android:background="@color/header_dark"
+        android:elevation="0dp"
+        app:title=""
         app:titleTextColor="@color/white">
 
+        <!-- Logo in toolbar title area -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="-4dp">
+            <androidx.cardview.widget.CardView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginEnd="10dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/techloan_logo"
+                    android:scaleType="centerInside"
+                    android:padding="3dp"
+                    android:contentDescription="Logo"/>
+            </androidx.cardview.widget.CardView>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TechLoan" android:textColor="@color/white" android:textSize="16sp" android:fontFamily="sans-serif-bold"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Student Portal" android:textColor="#9B6070" android:textSize="10sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Notification bell -->
         <FrameLayout
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
             android:layout_marginEnd="8dp">
-
             <ImageButton
                 android:id="@+id/btnNotifications"
                 android:layout_width="40dp"
@@ -30,7 +58,6 @@
                 android:contentDescription="Notifications"
                 android:src="@android:drawable/ic_popup_reminder"
                 android:tint="@color/white"/>
-
             <TextView
                 android:id="@+id/tvNotifBadge"
                 android:layout_width="18dp"
@@ -43,7 +70,6 @@
                 android:textSize="10sp"
                 android:fontFamily="sans-serif-bold"
                 android:visibility="gone"/>
-
         </FrameLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 
@@ -51,60 +77,56 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="60dp"
         android:layout_marginBottom="64dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp">
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
 
-            <!-- Welcome card with crimson gradient feel -->
+            <!-- Welcome card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/primary"
-                android:layout_marginBottom="14dp">
+                android:layout_marginBottom="16dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Good day,"
+                        android:textSize="13sp"
+                        android:textColor="@color/white"
+                        android:alpha="0.7"
+                        android:fontFamily="sans-serif"/>
                     <TextView
                         android:id="@+id/tvWelcome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hello, User!"
-                        android:textSize="22sp"
-                        android:fontFamily="sans-serif-bold"
+                        android:text="User!"
+                        android:textSize="24sp"
+                        android:fontFamily="sans-serif-black"
                         android:textColor="@color/white"
-                        android:layout_marginBottom="3dp"/>
+                        android:layout_marginBottom="4dp"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Manage your equipment loans"
                         android:textSize="12sp"
                         android:textColor="@color/white"
-                        android:alpha="0.8"/>
+                        android:alpha="0.65"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-            <!-- Stats label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Your Summary"
-                android:textSize="13sp"
-                android:fontFamily="sans-serif-bold"
-                android:textColor="@color/gray_700"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="2dp"/>
 
             <!-- Stats row -->
             <LinearLayout
@@ -113,26 +135,25 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="16dp">
 
-                <!-- Active loans -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="7dp"
-                    app:cardCornerRadius="14dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/primary_surface">
+                    app:cardBackgroundColor="@color/white">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="14dp">
+                        android:padding="16dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Active"
+                            android:text="Active Loans"
                             android:textSize="11sp"
-                            android:textColor="@color/gray_600"
+                            android:textColor="@color/gray_400"
                             android:fontFamily="sans-serif-medium"
                             android:layout_marginBottom="4dp"/>
                         <TextView
@@ -140,32 +161,31 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textSize="32sp"
-                            android:fontFamily="sans-serif-bold"
+                            android:textSize="36sp"
+                            android:fontFamily="sans-serif-black"
                             android:textColor="@color/primary"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Pending -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="7dp"
-                    app:cardCornerRadius="14dp"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/gold_surface">
+                    app:cardBackgroundColor="@color/white">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="14dp">
+                        android:padding="16dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Pending"
                             android:textSize="11sp"
-                            android:textColor="@color/gray_600"
+                            android:textColor="@color/gray_400"
                             android:fontFamily="sans-serif-medium"
                             android:layout_marginBottom="4dp"/>
                         <TextView
@@ -173,43 +193,44 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textSize="32sp"
-                            android:fontFamily="sans-serif-bold"
+                            android:textSize="36sp"
+                            android:fontFamily="sans-serif-black"
                             android:textColor="@color/gold_dark"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
-            <!-- Quick actions -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Quick actions label -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="18dp">
+                android:text="Quick Actions"
+                android:textSize="13sp"
+                android:fontFamily="sans-serif-bold"
+                android:textColor="@color/gray_700"
+                android:layout_marginBottom="10dp"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBrowse"
-                    style="@style/Widget.TechLoan.Button"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="7dp"
-                    android:text="Browse"
-                    android:textSize="14sp"/>
+            <!-- Action buttons -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBrowse"
+                style="@style/Widget.TechLoan.Button"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="10dp"
+                android:text="Browse Equipment"
+                android:textSize="14sp"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnMyReservations"
-                    style="@style/Widget.TechLoan.OutlineButton"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="7dp"
-                    android:text="My Items"
-                    android:textSize="14sp"/>
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMyReservations"
+                style="@style/Widget.TechLoan.OutlineButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:text="My Reservations"
+                android:textSize="14sp"/>
 
-            <!-- Recent activity label -->
+            <!-- Recent activity -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -217,29 +238,27 @@
                 android:textSize="13sp"
                 android:fontFamily="sans-serif-bold"
                 android:textColor="@color/gray_700"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="2dp"/>
+                android:layout_marginBottom="10dp"/>
 
-            <!-- Activity item 1 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardActivity1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/white"
-                android:layout_marginBottom="7dp">
+                android:layout_marginBottom="8dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="14dp"
+                    android:padding="16dp"
                     android:gravity="center_vertical">
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="28dp"
+                        android:layout_width="4dp"
+                        android:layout_height="32dp"
                         android:background="@color/primary"
-                        android:layout_marginEnd="12dp"/>
+                        android:layout_marginEnd="14dp"/>
                     <TextView
                         android:id="@+id/tvActivity1"
                         android:layout_width="match_parent"
@@ -250,27 +269,26 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Activity item 2 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardActivity2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/white"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="14dp"
+                    android:padding="16dp"
                     android:gravity="center_vertical">
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="28dp"
+                        android:layout_width="4dp"
+                        android:layout_height="32dp"
                         android:background="@color/gold"
-                        android:layout_marginEnd="12dp"/>
+                        android:layout_marginEnd="14dp"/>
                     <TextView
                         android:id="@+id/tvActivity2"
                         android:layout_width="match_parent"
@@ -280,16 +298,14 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Sign out -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
                 android:text="Sign Out"
-                android:textColor="@color/primary"
-                android:textSize="13sp"
-                android:layout_marginTop="8dp"/>
+                android:textColor="@color/gray_400"
+                android:textSize="13sp"/>
 
         </LinearLayout>
     </ScrollView>
