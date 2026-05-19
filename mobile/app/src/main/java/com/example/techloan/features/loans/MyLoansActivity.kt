@@ -1,11 +1,13 @@
 package com.example.techloan.features.loans
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.techloan.databinding.ActivityMyLoansBinding
+import com.example.techloan.features.dashboard.DashboardActivity
 
 class MyLoansActivity : AppCompatActivity() {
 
@@ -19,8 +21,12 @@ class MyLoansActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "My Loans"
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        binding.toolbar.setNavigationOnClickListener {
+            startActivity(Intent(this, DashboardActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            })
+        }
 
         adapter = LoanAdapter()
         binding.rvLoans.layoutManager = LinearLayoutManager(this)
@@ -34,7 +40,6 @@ class MyLoansActivity : AppCompatActivity() {
         observeViewModel()
     }
 
-    override fun onSupportNavigateUp(): Boolean { finish(); return true }
 
     private fun observeViewModel() {
         viewModel.state.observe(this) { state ->

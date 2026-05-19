@@ -6,7 +6,12 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.techloan.R
 import com.example.techloan.databinding.ActivityMyReservationsBinding
+import com.example.techloan.features.dashboard.DashboardActivity
+import com.example.techloan.features.inventory.InventoryActivity
+import com.example.techloan.features.penalty.MyPenaltiesActivity
+import com.example.techloan.features.profile.ProfileActivity
 import com.example.techloan.features.reservation.QRCodeViewActivity
 
 class MyReservationsActivity : AppCompatActivity() {
@@ -21,8 +26,7 @@ class MyReservationsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "My Reservations"
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         adapter = ReservationAdapter(onShowQr = { reservation ->
             val intent = Intent(this, QRCodeViewActivity::class.java)
@@ -38,9 +42,26 @@ class MyReservationsActivity : AppCompatActivity() {
 
         viewModel.loadMyReservations(token, userId)
         observeViewModel()
+        setupBottomNav()
     }
 
-    override fun onSupportNavigateUp(): Boolean { finish(); return true }
+    private fun setupBottomNav() {
+        binding.bottomNav.selectedItemId = R.id.nav_reservations
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            fun go(cls: Class<*>) = startActivity(
+                Intent(this, cls).apply { flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP }
+            )
+            when (item.itemId) {
+                R.id.nav_home         -> { go(DashboardActivity::class.java); true }
+                R.id.nav_inventory    -> { go(InventoryActivity::class.java); true }
+                R.id.nav_reservations -> true
+                R.id.nav_penalties    -> { go(MyPenaltiesActivity::class.java); true }
+                R.id.nav_profile      -> { go(ProfileActivity::class.java); true }
+                else -> false
+            }
+        }
+    }
+
 
     private fun observeViewModel() {
         viewModel.state.observe(this) { state ->

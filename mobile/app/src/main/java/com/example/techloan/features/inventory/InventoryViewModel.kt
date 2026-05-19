@@ -31,15 +31,19 @@ class InventoryViewModel : ViewModel() {
     private val _imageUpdate = MutableLiveData<Pair<Long, String>>()
     val imageUpdate: LiveData<Pair<Long, String>> = _imageUpdate
 
+    private var allItems: List<InventoryItemDto> = emptyList()
+    private var activeQuery: String = ""
+    private var activeCategory: String? = null
+
     fun loadItems(token: String) {
         _state.value = InventoryState.Loading
         viewModelScope.launch {
             try {
                 val res = RetrofitClient.api.getAvailableInventory(token)
                 if (res.isSuccessful) {
-                    val items = res.body() ?: emptyList()
-                    _state.value = InventoryState.Success(items)
-                    fetchAutoImages(token, items)
+                    allItems = res.body() ?: emptyList()
+                    applyFilter()
+                    fetchAutoImages(token, allItems)
                 } else {
                     _state.value = InventoryState.Error("Failed to load inventory (${res.code()})")
                 }
@@ -48,6 +52,26 @@ class InventoryViewModel : ViewModel() {
             }
         }
     }
+
+    fun filter(query: String, category: String?) {
+        activeQuery = query
+        activeCategory = category
+        applyFilter()
+    }
+
+    private fun applyFilter() {
+        val filtered = allItems.filter { item ->
+            val matchQuery = activeQuery.isEmpty() ||
+                item.itemName.contains(activeQuery, ignoreCase = true) ||
+                item.description?.contains(activeQuery, ignoreCase = true) == true
+            val matchCat = activeCategory == null || item.category == activeCategory
+            matchQuery && matchCat
+        }
+        _state.value = InventoryState.Success(filtered)
+    }
+
+    fun categories(): List<String> =
+        allItems.mapNotNull { it.category }.distinct().sorted()
 
     private fun fetchAutoImages(token: String, items: List<InventoryItemDto>) {
         items.filter { it.imageUrl.isNullOrEmpty() && !it.userProvidedImage }

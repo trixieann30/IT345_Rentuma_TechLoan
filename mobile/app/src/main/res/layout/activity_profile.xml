@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -13,22 +14,34 @@
         android:background="@color/header_dark"
         android:elevation="0dp"
         app:title="My Profile"
-        app:titleTextColor="@color/white"
-        app:navigationIconTint="@color/white"/>
+        app:titleTextColor="@color/white">
+
+        <ImageButton
+            android:id="@+id/btnEdit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_edit"
+            android:tint="@color/white"
+            android:contentDescription="Edit Profile"/>
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:indeterminateTint="@color/primary"
         android:visibility="gone"/>
 
     <ScrollView
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:visibility="gone">
 
         <LinearLayout
@@ -133,12 +146,33 @@
                             android:textColor="@color/gray_400"
                             android:textSize="10sp"/>
 
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Full Name" android:textColor="@color/gray_400" android:textSize="11sp"/>
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tvNameDetail"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Student / Faculty ID"
-                            android:textColor="@color/gray_400"
-                            android:textSize="11sp"/>
+                            android:layout_marginBottom="14dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="—"
+                            android:textColor="@color/gray_900"
+                            android:textSize="15sp"/>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_100" android:layout_marginBottom="14dp"/>
+
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email Address" android:textColor="@color/gray_400" android:textSize="11sp"/>
+                        <TextView
+                            android:id="@+id/tvEmailDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="14dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="—"
+                            android:textColor="@color/gray_900"
+                            android:textSize="15sp"/>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_100" android:layout_marginBottom="14dp"/>
+
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Student / Faculty ID" android:textColor="@color/gray_400" android:textSize="11sp"/>
                         <TextView
                             android:id="@+id/tvStudentId"
                             android:layout_width="match_parent"
@@ -149,26 +183,31 @@
                             android:textColor="@color/gray_900"
                             android:textSize="15sp"/>
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/gray_100"
-                            android:layout_marginBottom="14dp"/>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_100" android:layout_marginBottom="14dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Account Type"
-                            android:textColor="@color/gray_400"
-                            android:textSize="11sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Account Type" android:textColor="@color/gray_400" android:textSize="11sp"/>
                         <TextView
                             android:id="@+id/tvRoleDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="14dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="—"
+                            android:textColor="@color/gray_900"
+                            android:textSize="15sp"/>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_100" android:layout_marginBottom="14dp"/>
+
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Institutional Account" android:textColor="@color/gray_400" android:textSize="11sp"/>
+                        <TextView
+                            android:id="@+id/tvInstitutional"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-medium"
                             android:text="—"
                             android:textColor="@color/gray_900"
                             android:textSize="15sp"/>
+
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -177,7 +216,7 @@
                     android:id="@+id/cardPenalty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="12dp"
                     app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="0dp">
@@ -219,6 +258,60 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
+                <!-- Borrowing History card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:letterSpacing="0.08"
+                            android:text="BORROWING HISTORY"
+                            android:textColor="@color/gray_400"
+                            android:textSize="10sp"/>
+
+                        <LinearLayout
+                            android:id="@+id/llHistory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
+
+                        <TextView
+                            android:id="@+id/tvHistoryEmpty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="No borrowing history yet."
+                            android:textColor="@color/gray_400"
+                            android:textSize="13sp"
+                            android:gravity="center"
+                            android:paddingVertical="8dp"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Change Password button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnChangePassword"
+                    style="@style/Widget.TechLoan.OutlineButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Change Password"/>
+
+                <!-- Sign Out button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogout"
                     style="@style/Widget.TechLoan.OutlineButton"
@@ -230,4 +323,14 @@
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/white"
+        app:elevation="8dp"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:menu="@menu/menu_bottom_nav"/>
+
+</LinearLayout>

@@ -93,13 +93,36 @@ class AuthViewModel : ViewModel() {
                 )
                 if (response.isSuccessful) {
                     val body = response.body()
-                    _authState.value = AuthState.Success(body?.token ?: "", "Registration successful!")
+                    _authState.value = AuthState.Success(body?.token ?: "", "Registration successful!", body?.user)
                 } else {
                     val errorBody = response.errorBody()?.string() ?: ""
                     val msg = when (response.code()) {
                         400 -> "Validation error: $errorBody"
                         409 -> "Email or Student ID already registered."
                         else -> "Registration failed (${response.code()})"
+                    }
+                    _authState.value = AuthState.Error(msg)
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(networkErrorMessage(e))
+            }
+        }
+    }
+
+    fun registerWithGoogle(idToken: String, role: String, citEmail: String) {
+        _authState.value = AuthState.Loading
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.api.googleSignIn(
+                    GoogleAuthRequestDto(idToken = idToken, role = role, personalEmail = citEmail)
+                )
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    _authState.value = AuthState.Success(body?.token ?: "", "Registration successful!", body?.user)
+                } else {
+                    val msg = when (response.code()) {
+                        409 -> "Email already registered. Try signing in instead."
+                        else -> "Google sign-up failed. Ensure you use a valid @cit.edu email."
                     }
                     _authState.value = AuthState.Error(msg)
                 }

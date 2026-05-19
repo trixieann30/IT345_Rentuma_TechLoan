@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.techloan.shared.model.PenaltySummaryDto
+import com.example.techloan.shared.model.UpdateProfileRequest
 import com.example.techloan.shared.model.UserDto
 import com.example.techloan.shared.network.RetrofitClient
 import kotlinx.coroutines.launch
@@ -26,10 +27,20 @@ sealed class ProfileState {
     data class Error(val message: String) : ProfileState()
 }
 
+sealed class UpdateState {
+    object Idle : UpdateState()
+    object Loading : UpdateState()
+    data class Success(val user: UserDto) : UpdateState()
+    data class Error(val message: String) : UpdateState()
+}
+
 class ProfileViewModel : ViewModel() {
 
     private val _state = MutableLiveData<ProfileState>()
     val state: LiveData<ProfileState> = _state
+
+    private val _updateState = MutableLiveData<UpdateState>(UpdateState.Idle)
+    val updateState: LiveData<UpdateState> = _updateState
 
     fun loadProfile(token: String, userId: Long) {
         _state.value = ProfileState.Loading
@@ -52,4 +63,42 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
+
+    fun updateProfile(
+        token: String,
+        fullName: String,
+        studentId: String?,
+        personalEmail: String?,
+        currentPassword: String?,
+        newPassword: String?
+    ) {
+        _updateState.value = UpdateState.Loading
+        viewModelScope.launch {
+            try {
+                val res = RetrofitClient.api.updateProfile(
+                    token,
+                    UpdateProfileRequest(fullName, studentId, personalEmail, currentPassword, newPassword)
+                )
+                if (res.isSuccessful && res.body() != null) {
+                    val updated = res.body()!!
+                    _updateState.value = UpdateState.Success(updated)
+                    val cur = _state.value
+                    if (cur is ProfileState.Success) {
+                        _state.value = ProfileState.Success(cur.data.copy(user = updated))
+                    }
+                } else {
+                    val msg = try {
+                        org.json.JSONObject(res.errorBody()?.string() ?: "").getString("message")
+                    } catch (_: Exception) {
+                        "Update failed (${res.code()})"
+                    }
+                    _updateState.value = UpdateState.Error(msg)
+                }
+            } catch (e: Exception) {
+                _updateState.value = UpdateState.Error(networkErrorMessage(e))
+            }
+        }
+    }
+
+    fun resetUpdateState() { _updateState.value = UpdateState.Idle }
 }

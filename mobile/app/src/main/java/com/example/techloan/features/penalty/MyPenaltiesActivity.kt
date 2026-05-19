@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.techloan.R
 import com.example.techloan.databinding.ActivityMyPenaltiesBinding
+import com.example.techloan.features.dashboard.DashboardActivity
+import com.example.techloan.features.inventory.InventoryActivity
+import com.example.techloan.features.profile.ProfileActivity
+import com.example.techloan.features.reservation.MyReservationsActivity
 import com.example.techloan.shared.model.PenaltyDto
 
 class MyPenaltiesActivity : AppCompatActivity() {
@@ -27,7 +31,7 @@ class MyPenaltiesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
         token = "Bearer ${prefs.getString("jwt_token", "") ?: ""}"
@@ -39,6 +43,24 @@ class MyPenaltiesActivity : AppCompatActivity() {
         binding.rvPenalties.adapter = adapter
 
         observeViewModel()
+        setupBottomNav()
+    }
+
+    private fun setupBottomNav() {
+        binding.bottomNav.selectedItemId = R.id.nav_penalties
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            fun go(cls: Class<*>) = startActivity(
+                Intent(this, cls).apply { flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP }
+            )
+            when (item.itemId) {
+                R.id.nav_home         -> { go(DashboardActivity::class.java); true }
+                R.id.nav_inventory    -> { go(InventoryActivity::class.java); true }
+                R.id.nav_reservations -> { go(MyReservationsActivity::class.java); true }
+                R.id.nav_penalties    -> true
+                R.id.nav_profile      -> { go(ProfileActivity::class.java); true }
+                else -> false
+            }
+        }
     }
 
     override fun onResume() {
@@ -46,7 +68,6 @@ class MyPenaltiesActivity : AppCompatActivity() {
         if (::token.isInitialized) viewModel.load(token, userId)
     }
 
-    override fun onSupportNavigateUp(): Boolean { finish(); return true }
 
     private fun observeViewModel() {
         viewModel.state.observe(this) { state ->

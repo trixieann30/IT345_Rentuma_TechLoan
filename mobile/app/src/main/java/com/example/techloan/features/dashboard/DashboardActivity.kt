@@ -30,12 +30,7 @@ class DashboardActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("techloan_prefs", MODE_PRIVATE)
         val userName = prefs.getString("user_name", "User") ?: "User"
         token = "Bearer ${prefs.getString("jwt_token", "") ?: ""}"
-        binding.tvWelcome.text = "👋 Hello, ${userName.split(" ").first()}!"
-
-        binding.toolbar.inflateMenu(R.menu.menu_dashboard)
-        binding.toolbar.setOnMenuItemClickListener { item ->
-            if (item.itemId == R.id.action_logout) { logout(); true } else false
-        }
+        binding.tvWelcome.text = "Hello, ${userName.split(" ").first()}!"
 
         binding.btnNotifications.setOnClickListener {
             startActivity(Intent(this, NotificationActivity::class.java))
@@ -56,15 +51,19 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, MyPenaltiesActivity::class.java))
         }
 
+        // Bottom nav
+        binding.bottomNav.selectedItemId = R.id.nav_home
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home      -> true
-                R.id.nav_inventory -> { startActivity(Intent(this, InventoryActivity::class.java)); true }
-                R.id.nav_loans     -> { startActivity(Intent(this, MyLoansActivity::class.java)); true }
-                R.id.nav_profile   -> { startActivity(Intent(this, ProfileActivity::class.java)); true }
+                R.id.nav_home         -> true
+                R.id.nav_inventory    -> { startActivity(Intent(this, InventoryActivity::class.java)); true }
+                R.id.nav_reservations -> { startActivity(Intent(this, MyReservationsActivity::class.java)); true }
+                R.id.nav_penalties    -> { startActivity(Intent(this, MyPenaltiesActivity::class.java)); true }
+                R.id.nav_profile      -> { startActivity(Intent(this, ProfileActivity::class.java)); true }
                 else -> false
             }
         }
+
     }
 
     override fun onResume() {

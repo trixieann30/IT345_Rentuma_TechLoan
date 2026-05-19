@@ -16,6 +16,7 @@ import com.example.techloan.shared.model.PenaltySummaryDto
 import com.example.techloan.shared.model.RegisterRequest
 import com.example.techloan.shared.model.ResetPasswordRequest
 import com.example.techloan.shared.model.UnreadCountDto
+import com.example.techloan.shared.model.UpdateProfileRequest
 import com.example.techloan.shared.model.UserDto
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -41,6 +42,12 @@ interface TechLoanApi {
 
     @GET("auth/me")
     suspend fun getMe(@Header("Authorization") token: String): Response<UserDto>
+
+    @PUT("auth/me")
+    suspend fun updateProfile(
+        @Header("Authorization") token: String,
+        @Body request: UpdateProfileRequest
+    ): Response<UserDto>
 
     @GET("inventory/available")
     suspend fun getAvailableInventory(

@@ -14,12 +14,12 @@
         android:background="@color/header_dark"
         android:elevation="0dp"
         app:title="My Penalties"
-        app:titleTextColor="@color/white"
-        app:navigationIconTint="@color/white"/>
+        app:titleTextColor="@color/white"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <!-- Loading -->
         <ProgressBar
@@ -165,5 +165,15 @@
         </LinearLayout>
 
     </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/white"
+        app:elevation="8dp"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:menu="@menu/menu_bottom_nav"/>
 
 </LinearLayout>

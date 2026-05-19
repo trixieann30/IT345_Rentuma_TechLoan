@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/header_dark">
+
+    <!-- Logo row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="4dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginEnd="10dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/techloan_logo"
+                android:scaleType="centerInside"
+                android:padding="4dp"
+                android:contentDescription="Logo"/>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TechLoan"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CIT-U Lab System"
+                android:textColor="@color/gold"
+                android:textSize="10sp"
+                android:alpha="0.7"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#0AFFFFFF"/>
+
+    <!-- Section label -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STUDENT PORTAL"
+        android:textColor="#9A6078"
+        android:textSize="9sp"
+        android:fontFamily="sans-serif-bold"
+        android:letterSpacing="0.12"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="4dp"/>
+
+</LinearLayout>

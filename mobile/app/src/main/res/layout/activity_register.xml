@@ -10,48 +10,64 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="24dp">
+        android:paddingBottom="32dp">
 
-        <!-- Hero header -->
+        <!-- Dark hero header -->
         <LinearLayout
-            android:id="@+id/cardHeader"
+            android:id="@+id/layoutHeader"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="200dp"
             android:orientation="vertical"
             android:gravity="center"
+            android:padding="24dp"
             android:background="@color/header_dark"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginBottom="12dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/techloan_logo"
+                    android:scaleType="centerInside"
+                    android:padding="6dp"
+                    android:contentDescription="TechLoan Logo"/>
+            </androidx.cardview.widget.CardView>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Join TechLoan"
-                android:textColor="#9B6070"
-                android:textSize="13sp"
-                android:fontFamily="sans-serif"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create Account"
+                android:text="TechLoan"
                 android:textColor="@color/white"
-                android:textSize="26sp"
-                android:fontFamily="sans-serif-black"
-                android:layout_marginTop="4dp"/>
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CIT-U Lab Equipment System"
+                android:textColor="#9B6070"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp"/>
         </LinearLayout>
 
-        <!-- Form Card -->
+        <!-- Form card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@color/white"
-            android:layout_marginTop="-16dp"
-            app:layout_constraintTop_toBottomOf="@id/cardHeader"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="-24dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -59,192 +75,317 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <TextView
-                    android:id="@+id/labelName"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Full Name"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_700"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="6dp"/>
+                    android:text="Create account"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="@color/gray_900"
+                    android:layout_marginBottom="2dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Join TechLoan using your CIT-U email"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_400"
+                    android:layout_marginBottom="20dp"/>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilName"
-                    style="@style/Widget.TechLoan.TextInputLayout"
+                <!-- Verification email state (shown after registration when email verification needed) -->
+                <LinearLayout
+                    android:id="@+id/layoutVerification"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etName"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_verification"
+                    android:padding="20dp"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✉"
+                        android:textSize="32sp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Check your email!"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-bold"
+                        android:textColor="@color/gray_900"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/tvVerificationDesc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName|textCapWords"
-                        android:imeOptions="actionNext"
-                        android:hint="Full name"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="We sent a verification link to your email. Click it to activate your account before logging in."
+                        android:textSize="13sp"
+                        android:textColor="@color/gray_600"
+                        android:gravity="center"
+                        android:layout_marginBottom="14dp"/>
 
-                <TextView
-                    android:id="@+id/labelEmail"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGoToLoginFromVerification"
+                        style="@style/Widget.TechLoan.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="Back to Sign In"/>
+                </LinearLayout>
+
+                <!-- Registration form (hidden after verification triggered) -->
+                <LinearLayout
+                    android:id="@+id/layoutForm"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Email Address"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_700"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="6dp"/>
+                    android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilEmail"
-                    style="@style/Widget.TechLoan.TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etEmail"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:imeOptions="actionNext"
-                        android:hint="you@email.com"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Full Name"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_700"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="6dp"/>
 
-                <TextView
-                    android:id="@+id/labelPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Password"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_700"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="6dp"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPassword"
-                    style="@style/Widget.TechLoan.TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:passwordToggleEnabled="true"
-                    android:layout_marginBottom="14dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPassword"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilName"
+                        style="@style/Widget.TechLoan.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:imeOptions="actionNext"
-                        android:hint="Min. 8 characters"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginBottom="14dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName|textCapWords"
+                            android:imeOptions="actionNext"
+                            android:hint="Juan Dela Cruz"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/labelConfirmPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Confirm Password"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_700"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="6dp"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilConfirmPassword"
-                    style="@style/Widget.TechLoan.TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:passwordToggleEnabled="true"
-                    android:layout_marginBottom="14dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etConfirmPassword"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:imeOptions="actionNext"
-                        android:hint="Re-enter password"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Institutional Email"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_700"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="6dp"/>
 
-                <TextView
-                    android:id="@+id/labelStudentId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Student / Faculty ID"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_700"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="6dp"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilStudentId"
-                    style="@style/Widget.TechLoan.TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etStudentId"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilEmail"
+                        style="@style/Widget.TechLoan.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:imeOptions="actionNext"
-                        android:hint="e.g., 2024-12345"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginBottom="14dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
+                            android:imeOptions="actionNext"
+                            android:hint="you@cit.edu"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/labelRole"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Account Type"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_700"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="6dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Student / Faculty ID"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_700"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="6dp"/>
 
-                <Spinner
-                    android:id="@+id/spinnerRole"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="14dp"
-                    android:entries="@array/role_options"
-                    android:padding="12dp"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilStudentId"
+                        style="@style/Widget.TechLoan.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etStudentId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:imeOptions="actionNext"
+                            android:hint="21-2324-232"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/tvError"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/primary"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    android:layout_marginBottom="6dp"
-                    android:fontFamily="sans-serif"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Account Type"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_700"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="6dp"/>
 
-                <TextView
-                    android:id="@+id/tvSuccess"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/green_600"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    android:layout_marginBottom="6dp"
-                    android:fontFamily="sans-serif"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilRole"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/gray_300"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        android:layout_marginBottom="14dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/actvRole"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:hint="Select role"
+                            android:padding="14dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/gray_900"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRegister"
-                    style="@style/Widget.TechLoan.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="Create Account"
-                    android:textSize="15sp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Password"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_700"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="6dp"/>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPassword"
+                        style="@style/Widget.TechLoan.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:passwordToggleEnabled="true"
+                        android:layout_marginBottom="14dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:imeOptions="actionNext"
+                            android:hint="Min. 8 characters"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Confirm Password"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_700"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="6dp"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilConfirmPassword"
+                        style="@style/Widget.TechLoan.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:passwordToggleEnabled="true"
+                        android:layout_marginBottom="16dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etConfirmPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:imeOptions="actionDone"
+                            android:hint="Re-enter password"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Terms checkbox -->
+                    <CheckBox
+                        android:id="@+id/cbTerms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="I have read and agree to the Terms and Conditions"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_600"
+                        android:buttonTint="@color/primary"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/tvTermsError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="You must agree to the Terms and Conditions"
+                        android:textColor="@color/primary"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Error / Success messages -->
+                    <TextView
+                        android:id="@+id/tvError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        android:background="@color/red_50"
+                        android:padding="10dp"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="sans-serif"/>
+
+                    <TextView
+                        android:id="@+id/tvSuccess"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/green_600"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRegister"
+                        style="@style/Widget.TechLoan.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:text="Create Account"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- OR divider -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+                        <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="@color/gray_200"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="  OR  " android:textColor="@color/gray_400" android:textSize="11sp"/>
+                        <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="@color/gray_200"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGoogleSignUp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:text="Sign Up with Google"
+                        android:textColor="@color/gray_900"
+                        android:textSize="14sp"
+                        app:strokeColor="@color/gray_200"
+                        app:strokeWidth="1.5dp"
+                        app:cornerRadius="14dp"/>
+
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:indeterminateTint="@color/primary"
-            android:layout_margin="8dp"
+            android:layout_margin="12dp"
             app:layout_constraintTop_toBottomOf="@id/cardForm"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -253,11 +394,11 @@
             android:id="@+id/btnGoToLogin"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="44dp"
             android:text="Already have an account? Sign In"
             android:textColor="@color/primary"
             android:textSize="13sp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@id/progressBar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -31,9 +31,19 @@ data class UserDto(
     val fullName: String? = null,
     val email: String? = null,
     val studentId: String? = null,
+    val personalEmail: String? = null,
+    val institutionalEmail: String? = null,
     val role: String? = null,
     val penaltyPoints: Int? = null,
     val createdAt: String? = null
+)
+
+data class UpdateProfileRequest(
+    val fullName: String,
+    val studentId: String? = null,
+    val personalEmail: String? = null,
+    val currentPassword: String? = null,
+    val newPassword: String? = null
 )
 
 data class InventoryItemDto(

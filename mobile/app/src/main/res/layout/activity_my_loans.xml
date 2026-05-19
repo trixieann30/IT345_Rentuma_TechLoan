@@ -15,6 +15,7 @@
         android:elevation="0dp"
         app:title="My Loans"
         app:titleTextColor="@color/white"
+        app:navigationIcon="@drawable/ic_home"
         app:navigationIconTint="@color/white"/>
 
     <FrameLayout

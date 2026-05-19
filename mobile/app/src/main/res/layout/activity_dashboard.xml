@@ -16,13 +16,12 @@
         app:title=""
         app:titleTextColor="@color/white">
 
-        <!-- Logo in toolbar title area -->
+        <!-- Logo in toolbar -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginStart="-4dp">
+            android:gravity="center_vertical">
             <androidx.cardview.widget.CardView
                 android:layout_width="34dp"
                 android:layout_height="34dp"
@@ -234,12 +233,13 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="14dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📦"
-                            android:textSize="26sp"
-                            android:layout_marginBottom="8dp"/>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@drawable/ic_browse"
+                            android:tint="@color/white"
+                            android:contentDescription="Browse"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -265,31 +265,32 @@
                     android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/gold">
+                    app:cardBackgroundColor="@color/header_dark">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="14dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📋"
-                            android:textSize="26sp"
-                            android:layout_marginBottom="8dp"/>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@drawable/ic_calendar"
+                            android:tint="@color/gold"
+                            android:contentDescription="Reservations"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="My"
-                            android:textColor="@color/header_dark"
+                            android:textColor="@color/white"
                             android:textSize="13sp"
                             android:fontFamily="sans-serif-bold"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Reservations"
-                            android:textColor="#88000000"
+                            android:textColor="#88FFFFFF"
                             android:textSize="11sp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -312,19 +313,20 @@
                     android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/blue_600">
+                    app:cardBackgroundColor="@color/primary_dark">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="14dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔄"
-                            android:textSize="26sp"
-                            android:layout_marginBottom="8dp"/>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@drawable/ic_calendar"
+                            android:tint="@color/white"
+                            android:contentDescription="Loans"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -350,31 +352,32 @@
                     android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/header_dark">
+                    app:cardBackgroundColor="@color/gold">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="14dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⚠️"
-                            android:textSize="26sp"
-                            android:layout_marginBottom="8dp"/>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@drawable/ic_warning"
+                            android:tint="@color/header_dark"
+                            android:contentDescription="Penalties"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="My"
-                            android:textColor="@color/white"
+                            android:textColor="@color/header_dark"
                             android:textSize="13sp"
                             android:fontFamily="sans-serif-bold"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Penalties"
-                            android:textColor="@color/gold"
+                            android:textColor="#88000000"
                             android:textSize="11sp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
